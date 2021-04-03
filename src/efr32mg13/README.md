@@ -21,6 +21,7 @@ In a Bash terminal, follow these instructions to install the GNU toolchain and o
 
 ```bash
 $ cd <path-to-ot-efr32>
+$ git submodule update --init
 $ ./script/bootstrap
 ```
 
@@ -31,7 +32,6 @@ the build may be launched using `./script/build`
 
 ```bash
 $ cd <path-to-ot-efr32>
-$ git submodule update --init
 $ ./script/build efr32mg13 -DBOARD=brd4168a
 ...
 -- Configuring done
@@ -60,7 +60,7 @@ Compiled binaries may be flashed onto the EFR32 using [JLinkGDBServer][jlinkgdbs
 ```bash
 $ cd <path-to-JLinkGDBServer>
 $ sudo ./JLinkGDBServer -if swd -device EFR32MG13PxxxF1024
-$ cd <path-to-ot-efr32>/build/bin
+$ cd <path-to-ot-efr32>/build/efr32mg13/bin
 $ arm-none-eabi-gdb ot-cli-ftd
 $ (gdb) target remote 127.0.0.1:2331
 $ (gdb) load
@@ -75,7 +75,7 @@ Or Compiled binaries also may be flashed onto the specified EFR32 dev board usin
 [j-link-commander]: https://www.segger.com/products/debug-probes/j-link/tools/j-link-commander/
 
 ```bash
-$ cd <path-to-ot-efr32>/build/bin
+$ cd <path-to-ot-efr32>/build/efr32mg13/bin
 $ arm-none-eabi-objcopy -O ihex ot-cli-ftd ot-cli-ftd.hex
 $ JLinkExe -device EFR32MG13PxxxF1024 -speed 4000 -if SWD -autoconnect 1 -SelectEmuBySN <SerialNo>
 $ J-Link>loadfile ot-cli-ftd.hex

@@ -22,6 +22,7 @@ In a Bash terminal, follow these instructions to install the GNU toolchain and o
 
 ```bash
 $ cd <path-to-ot-efr32>
+$ git submodule update --init
 $ ./script/bootstrap
 ```
 
@@ -32,7 +33,6 @@ the build may be launched using `./script/build`
 
 ```bash
 $ cd <path-to-ot-efr32>
-$ git submodule update --init
 $ ./script/build efr32mg12 -DBOARD=brd4161a
 ...
 -- Configuring done

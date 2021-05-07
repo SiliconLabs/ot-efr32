@@ -27,27 +27,6 @@
 #
 
 # ==============================================================================
-# Verify board is supported for platform
-# ==============================================================================
-if(BOARD_LOWERCASE STREQUAL "brd4180a")
-    set(MCU "EFR32MG21A020F1024IM32")
-elseif(BOARD_LOWERCASE STREQUAL "brd4180b")
-    set(MCU "EFR32MG21A020F1024IM32")
-else()
-    message(FATAL_ERROR "
-    BOARD=${BOARD} not supported.
-
-    Please provide a value for BOARD variable e.g BOARD=brd4180a.
-    Currently supported:
-    - brd4180a
-    - brd4180b
-    ")
-endif()
-
-list(APPEND OT_PLATFORM_DEFINES "${MCU}")
-set(OT_PLATFORM_DEFINES ${OT_PLATFORM_DEFINES} PARENT_SCOPE)
-
-# ==============================================================================
 # Platform library
 # ==============================================================================
 set(OT_PLATFORM_LIB "openthread-efr32mg21")

@@ -29,16 +29,18 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(ot-efr32 VERSION 0.2.0)
 
-set(EFR32_PLATFORM_VALUES
-    "efr32mg1"
-    "efr32mg12"
-    "efr32mg13"
-    "efr32mg21"
-)
-set_property(CACHE EFR32_PLATFORM PROPERTY STRINGS ${EFR32_PLATFORM_VALUES})
-if(NOT EFR32_PLATFORM IN_LIST EFR32_PLATFORM_VALUES)
-    message(FATAL_ERROR "Please select a supported platform: ${EFR32_PLATFORM_VALUES}")
+# Get list of supported platforms
+file(GLOB EFR32_PLATFORMS
+    RELATIVE "${PROJECT_SOURCE_DIR}/src/"
+    "${PROJECT_SOURCE_DIR}/src/efr*/")
+set(EFR32_PLATFORMS ${EFR32_PLATFORMS})
+
+# Check if ${EFR32_PLATFORM} is supported
+if(NOT EFR32_PLATFORM IN_LIST EFR32_PLATFORMS)
+    message(FATAL_ERROR "Please select a supported platform: ${EFR32_PLATFORMS}")
 endif()
+
+set_property(CACHE EFR32_PLATFORM PROPERTY STRINGS ${EFR32_PLATFORM})
 
 set(OT_PLATFORM_LIB "openthread-${EFR32_PLATFORM}")
 

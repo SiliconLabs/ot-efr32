@@ -32,6 +32,40 @@ include(${PROJECT_SOURCE_DIR}/third_party/silabs/cmake/imported_libs.cmake)
 
 
 # ==============================================================================
+# Verify board is supported
+# ==============================================================================
+get_board_device(${BOARD_LOWERCASE})
+
+list(APPEND OT_PLATFORM_DEFINES "${MCU}")
+set(OT_PLATFORM_DEFINES ${OT_PLATFORM_DEFINES} PARENT_SCOPE)
+
+# TODO: This will be removed when the configuration files in `src/efr32mg*/brd*/` are no longer manually generated and are generated as part of builds
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/src/${PLATFORM_LOWERCASE}/${BOARD_LOWERCASE}")
+    # Get list of boards supported for the platform
+    file(GLOB platform_boards
+            RELATIVE "${PROJECT_SOURCE_DIR}/src/${PLATFORM_LOWERCASE}/"
+            "${PROJECT_SOURCE_DIR}/src/${PLATFORM_LOWERCASE}/brd*/")
+
+    # Get first valid board to use as example
+    list(GET platform_boards 0 valid_board)
+
+    # Build error message
+    set(error_message "
+        MCU = ${MCU}
+        Config folder ${PROJECT_SOURCE_DIR}/src/${PLATFORM_LOWERCASE}/${BOARD_LOWERCASE} does not exist
+        BOARD=${BOARD} not supported.
+
+        Please provide a value for BOARD variable e.g BOARD=${valid_board}.
+        Currently supported:")
+    foreach(board IN LISTS platform_boards)
+        string(APPEND error_message "\n         - ${board}")
+    endforeach()
+
+    message(FATAL_ERROR "${error_message}")
+endif()
+
+
+# ==========================================================c====================
 # Common sources and includes
 # ==============================================================================
 set(EFR32_COMMON_SOURCES

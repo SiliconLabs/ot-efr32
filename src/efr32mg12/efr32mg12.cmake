@@ -27,33 +27,6 @@
 #
 
 # ==============================================================================
-# Verify board is supported for platform
-# ==============================================================================
-if(BOARD_LOWERCASE STREQUAL "brd4304a")
-    set(MCU "EFR32MG12P432F1024GM48")
-elseif(BOARD_LOWERCASE STREQUAL "brd4161a")
-    set(MCU "EFR32MG12P432F1024GL125")
-elseif(BOARD_LOWERCASE STREQUAL "brd4166a")
-    set(MCU "EFR32MG12P332F1024GL125")
-elseif(BOARD_LOWERCASE STREQUAL "brd4170a")
-    set(MCU "EFR32MG12P433F1024GM68")
-else()
-    message(FATAL_ERROR "
-    BOARD=${BOARD} not supported.
-
-    Please provide a value for BOARD variable e.g BOARD=brd4161a.
-    Currently supported:
-    - brd4161a
-    - brd4166a
-    - brd4170a
-    - brd4304a
-    ")
-endif()
-
-list(APPEND OT_PLATFORM_DEFINES "${MCU}")
-set(OT_PLATFORM_DEFINES ${OT_PLATFORM_DEFINES} PARENT_SCOPE)
-
-# ==============================================================================
 # Platform library
 # ==============================================================================
 

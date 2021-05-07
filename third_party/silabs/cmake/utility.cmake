@@ -38,3 +38,28 @@ set(SILABS_GSDK_DIR ${PROJECT_SOURCE_DIR}/third_party/silabs/sdk_support)
 if(NOT EXISTS "${SILABS_GSDK_DIR}")
     message(FATAL_ERROR "Cannot find: ${SILABS_GSDK_DIR}\nCheck that Silicon Labs GSDK ${SILABS_GSDK_VERSION} was installed properly")
 endif()
+
+##
+# Get the MCU used in a board and store to ${MCU} in caller's scope
+#
+# @param[in] - board
+##
+function(get_board_device board)
+    string(TOLOWER ${board} board)
+
+    # Read component file for the board into a var
+    set(board_component_file "${SILABS_GSDK_DIR}/hardware/board/component/${board}.slcc")
+    file(READ ${board_component_file} component_file)
+
+    # Attempt to get the "board:device" value
+    string(REGEX MATCH "\n[ \t]*- board:device:([a-zA-Z0-9]*)" _ ${component_file})
+    if(NOT ${CMAKE_MATCH_COUNT} EQUAL 1)
+        # There should 1 and only 1 match
+        message(FATAL_ERROR "Unable to find the MCU for ${board}")
+    endif()
+
+    # Return the matching value in the ${MCU} variable
+    string(TOUPPER ${CMAKE_MATCH_1} MCU)
+    set(MCU ${MCU} PARENT_SCOPE)
+    message(STATUS "Board ${board} contains device ${MCU}")
+endfunction()

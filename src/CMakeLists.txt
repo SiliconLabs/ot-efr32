@@ -34,7 +34,7 @@ include(${PROJECT_SOURCE_DIR}/third_party/silabs/cmake/imported_libs.cmake)
 # ==============================================================================
 # Verify board is supported
 # ==============================================================================
-get_board_device(${BOARD_LOWERCASE})
+get_board_device()
 
 list(APPEND OT_PLATFORM_DEFINES "${MCU}")
 set(OT_PLATFORM_DEFINES ${OT_PLATFORM_DEFINES} PARENT_SCOPE)

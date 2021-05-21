@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2021, The OpenThread Authors.
+#  Copyright (c) 2020, The OpenThread Authors.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,20 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 
-# ==============================================================================
-# sleepy-demo
-# ==============================================================================
-option(EFR32_APP_SLEEPY_DEMO "enable sleepy-demo app" ON)
+add_executable(sl-ot-rcp
+    main.c
+    ncp.c
+)
 
-if(EFR32_APP_SLEEPY_DEMO)
-    add_subdirectory(sleepy-demo)
-endif()
+target_include_directories(sl-ot-rcp PRIVATE ${COMMON_INCLUDES})
 
-# ==============================================================================
-# sl-ot-rcp
-# ==============================================================================
-option(EFR32_APP_SL_OT_RCP "enable sl-ot-rcp app" ON)
+target_link_libraries(sl-ot-rcp PRIVATE
+    openthread-rcp
+    ${OT_PLATFORM_LIB}
+    openthread-radio
+    ${OT_PLATFORM_LIB}
+    openthread-rcp
+    ot-config
+)
 
-if(EFR32_APP_SL_OT_RCP)
-    add_subdirectory(sl-ot-rcp)
-endif()
-
+install(TARGETS sl-ot-rcp DESTINATION bin)

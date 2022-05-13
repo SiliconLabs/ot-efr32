@@ -51,7 +51,6 @@
 
 #include "utils/soft_source_match_table.h"
 
-#include "antenna.h"
 #include "board_config.h"
 #include "em_core.h"
 #include "em_system.h"
@@ -2861,6 +2860,28 @@ void efr32RadioClearCoexCounters(void)
 #endif // SL_CATALOG_RAIL_UTIL_COEX_PRESENT
 
 RAIL_AntennaConfig_t halAntennaConfig;
+
+// The existence of Antenna GPIO location information on EFR32XG1 series
+// parts enables use of the more flexible RAIL scheme va. legacy GPIO scheme
+// for Tx-only diversity. However, the EFR32XG2 series doesn't use locations
+// so the HAL configurator doesn't provide any. But EFR32XG2 does have RfPath
+// selection, and BSP_ANTDIV_SEL_LOC is used for that.
+// On EFR32XG1 series, default location(s) to -1 to select legacy GPIO scheme.
+// On EFR32XG2 series, default location(s) to 1 to select RAIL scheme RfPath 1;
+// to force use of legacy GPIO scheme (because their GPIO choice for Tx-only
+// diversity isn't supported by the radio), user must define each respective
+// BSP_ANTDIV_[N]SEL_LOC as -1 in their HAL config include.
+#ifdef _SILICON_LABS_32B_SERIES_2
+#define ANTENNA_UNSPECIFIED_LOC 1  // Location to use RAIL scheme on RfPath 1
+#else                              //!_SILICON_LABS_32B_SERIES_2
+#define ANTENNA_UNSPECIFIED_LOC -1 // Dummy location to select legacy GPIO scheme
+#endif                             //_SILICON_LABS_32B_SERIES_2
+#ifndef BSP_ANTDIV_SEL_LOC
+#define BSP_ANTDIV_SEL_LOC ANTENNA_UNSPECIFIED_LOC
+#endif
+#ifndef BSP_ANTDIV_NSEL_LOC
+#define BSP_ANTDIV_NSEL_LOC ANTENNA_UNSPECIFIED_LOC
+#endif
 
 void initAntenna(void)
 {

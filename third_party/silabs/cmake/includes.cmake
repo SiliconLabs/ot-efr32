@@ -31,9 +31,6 @@ set(SILABS_GSDK_INCLUDES
     ${SILABS_GSDK_DIR}/hardware/kit/${PLATFORM_UPPERCASE}_${BOARD_UPPERCASE}/config
     ${SILABS_GSDK_DIR}/hardware/kit/common/bsp
     ${SILABS_GSDK_DIR}/hardware/kit/common/drivers
-    ${SILABS_GSDK_DIR}/platform/base/hal/micro/cortexm3/efm32
-    ${SILABS_GSDK_DIR}/platform/base/hal/micro/cortexm3/efm32/config
-    ${SILABS_GSDK_DIR}/platform/base/hal/plugin/antenna/
     ${SILABS_GSDK_DIR}/platform/CMSIS/Include
     ${SILABS_GSDK_DIR}/platform/common/inc
     ${SILABS_GSDK_DIR}/platform/emdrv/common/inc
@@ -44,6 +41,7 @@ set(SILABS_GSDK_INCLUDES
     ${SILABS_GSDK_DIR}/platform/emdrv/nvm3/inc
     ${SILABS_GSDK_DIR}/platform/emdrv/uartdrv/config
     ${SILABS_GSDK_DIR}/platform/emdrv/uartdrv/inc
+    ${SILABS_GSDK_DIR}/platform/emdrv/ustimer/config
     ${SILABS_GSDK_DIR}/platform/emdrv/ustimer/inc
     ${SILABS_GSDK_DIR}/platform/emlib/inc
     ${SILABS_GSDK_DIR}/platform/halconfig/inc/hal-config

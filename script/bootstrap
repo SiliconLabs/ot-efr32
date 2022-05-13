@@ -35,8 +35,7 @@ install_packages_apt()
 
     # apt-get update and install dependencies
     sudo apt-get update
-    sudo apt-get --no-install-recommends install -y coreutils
-
+    sudo apt-get --no-install-recommends install -y coreutils git-lfs
 }
 
 install_packages_opkg()

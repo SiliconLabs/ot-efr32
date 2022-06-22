@@ -81,6 +81,7 @@ set(slc_generated_projects
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/mbedtls
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/platform
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/mbedtls
+    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/sleepy-demo-ftd-lib
 )
 
 foreach(slc_project IN LISTS slc_generated_projects)

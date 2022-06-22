@@ -28,7 +28,6 @@
 
 add_executable(sleepy-demo-ftd
     ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
-    main.c
 )
 
 target_include_directories(sleepy-demo-ftd PRIVATE ${COMMON_INCLUDES})

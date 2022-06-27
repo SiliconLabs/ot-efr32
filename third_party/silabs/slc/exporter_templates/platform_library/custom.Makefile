@@ -37,7 +37,7 @@
         print_linker_flags,
         print_all_jinja_vars,
         openthread_device_type,
-        dict_contains_key_starting_with
+        dict_get_value
     with context -%}
 
 include(${PROJECT_SOURCE_DIR}/third_party/silabs/cmake/utility.cmake)
@@ -125,20 +125,40 @@ set_property(SOURCE {{source}} PROPERTY LANGUAGE C)
 # ==============================================================================
 # Compile definitions
 # ==============================================================================
+{%- set mbedtls_config_file = dict_get_value(C_CXX_DEFINES, "MBEDTLS_CONFIG_FILE") %}
+{%- set mbedtls_psa_crypto_config_file = dict_get_value(C_CXX_DEFINES, "MBEDTLS_PSA_CRYPTO_CONFIG_FILE") %}
+{%- if mbedtls_config_file or mbedtls_psa_crypto_config_file %}
+target_compile_definitions({{PROJECT_NAME}}-config INTERFACE
+{%- if mbedtls_config_file %}
+    {{mbedtls_config_file}}
+{%- endif %}
+{%- if mbedtls_psa_crypto_config_file %}
+    {{mbedtls_psa_crypto_config_file}}
+{%- endif %}
+)
+{%- endif %}
+
 target_compile_definitions(ot-config INTERFACE
 {%- for define in C_CXX_DEFINES %}
-    {%- if not ( define.startswith("MBEDTLS_PSA_CRYPTO_CLIENT") or ("OPENTHREAD_RADIO" == define) or ("OPENTHREAD_FTD" == define) or ("OPENTHREAD_MTD" == define) or ("OPENTHREAD_COPROCESSOR" == define) ) %}
+    {%- if not (
+            define.startswith("MBEDTLS_PSA_CRYPTO_CLIENT") or
+            define.startswith("MBEDTLS_CONFIG_FILE") or
+            define.startswith("MBEDTLS_PSA_CRYPTO_CONFIG_FILE") or
+            ("OPENTHREAD_RADIO" == define) or
+            ("OPENTHREAD_FTD" == define) or
+            ("OPENTHREAD_MTD" == define) or
+            ("OPENTHREAD_COPROCESSOR" == define)
+    ) %}
     {{define}}={{C_CXX_DEFINES[define]}}
     {%- endif %}
 {%- endfor %}
 )
 
-{% if dict_contains_key_starting_with(C_CXX_DEFINES, "MBEDTLS_PSA_CRYPTO_CLIENT") -%}
+{%- set mbedtls_psa_crypto_client = dict_get_value(C_CXX_DEFINES, "MBEDTLS_PSA_CRYPTO_CLIENT") %}
+{% if mbedtls_psa_crypto_client -%}
 target_compile_definitions({{PROJECT_NAME}}-config INTERFACE
 {%- for define in C_CXX_DEFINES %}
-    {%- if define.startswith("MBEDTLS_PSA_CRYPTO_CLIENT") %}
-    {{define}}={{C_CXX_DEFINES[define]}}
-    {%- endif %}
+    {{mbedtls_psa_crypto_client}}
 {%- endfor %}
 )
 

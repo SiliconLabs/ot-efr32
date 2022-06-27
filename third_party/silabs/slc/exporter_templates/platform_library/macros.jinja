@@ -194,9 +194,9 @@
     {%- endfor %}
 {%- endmacro %}
 
-{%- macro dict_contains_key_starting_with(dict, pattern) %}
+{%- macro dict_get_value(dict, pattern) %}
 {%- for key in dict %}
-    {%- if key.startswith(pattern) %}
+    {%- if key.startswith(pattern) -%}
     {{key}}={{dict[key]}}
     {%- endif %}
 {%- endfor %}

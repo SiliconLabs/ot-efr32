@@ -37,7 +37,7 @@
         print_linker_flags,
         print_all_jinja_vars,
         openthread_device_type,
-        dict_contains_key_starting_with
+        dict_get_value
     with context -%}
 
 include(${PROJECT_SOURCE_DIR}/third_party/silabs/cmake/utility.cmake)
@@ -149,8 +149,17 @@ target_link_libraries({{PROJECT_NAME}}
         -T${LD_FILE}
         -Wl,--gc-sections
 
+{%- if PROJECT_NAME.startswith("sleepy-demo-ftd") %}
+        openthread-cli-ftd
+        openthread-ftd
+{%- elif PROJECT_NAME.startswith("sleepy-demo-mtd") %}
+        openthread-cli-mtd
+        openthread-mtd
+{%- endif %}
+
         # The --whole-archive flags are necessary to resolve all symbols from the GSDK
         -Wl,--whole-archive ${ {{-PROJECT_NAME}}-sdk_location} -Wl,--no-whole-archive
+        ${OT_MBEDTLS}
         jlinkrtt
         ot-config
 )

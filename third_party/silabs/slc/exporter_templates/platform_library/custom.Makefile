@@ -53,13 +53,6 @@ add_library({{PROJECT_NAME}}
 # Interface lib for sharing efr32 config to relevant targets
 add_library({{PROJECT_NAME}}-config INTERFACE)
 
-{% if PROJECT_NAME.startswith("openthread-efr32-rcp") -%}
-# Define RCP specific libraries
-set(OT_PLATFORM_LIB_RCP openthread-efr32-rcp)
-set(OT_MBEDTLS_RCP silabs-mbedtls-rcp)
-
-{% endif -%}
-
 set_target_properties({{PROJECT_NAME}}
     PROPERTIES
         C_STANDARD 99
@@ -157,9 +150,7 @@ target_compile_definitions(ot-config INTERFACE
 {%- set mbedtls_psa_crypto_client = dict_get_value(C_CXX_DEFINES, "MBEDTLS_PSA_CRYPTO_CLIENT") %}
 {% if mbedtls_psa_crypto_client -%}
 target_compile_definitions({{PROJECT_NAME}}-config INTERFACE
-{%- for define in C_CXX_DEFINES %}
     {{mbedtls_psa_crypto_client}}
-{%- endfor %}
 )
 
 {% endif -%}

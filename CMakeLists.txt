@@ -51,7 +51,10 @@ endif()
 message(STATUS "Package Version: ${OT_PACKAGE_VERSION}")
 
 set(OT_PLATFORM_LIB "openthread-efr32-soc")
-set(OT_PLATFORM_LIB_RCP openthread-efr32-rcp)
+
+# Define RCP specific libraries
+set(OT_PLATFORM_LIB_RCP "openthread-efr32-rcp")
+set(OT_MBEDTLS_RCP "openthread-efr32-rcp-mbedtls" CACHE STRING "use silabs mbedtls" FORCE)
 
 set(OT_PLATFORM "external" CACHE STRING "disable example platforms" FORCE)
 
@@ -81,7 +84,6 @@ set(slc_generated_projects
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/mbedtls
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/platform
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/mbedtls
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/sleepy-demo-ftd-lib
 )
 
 foreach(slc_project IN LISTS slc_generated_projects)

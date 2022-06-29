@@ -65,8 +65,15 @@ set_target_properties({{PROJECT_NAME}}
 target_include_directories({{PROJECT_NAME}} PUBLIC
 {%- for include in C_CXX_INCLUDES %}
     {%- set include = prepare_path(include) | replace('-I', '') | replace('\"', '') %}
+    {%- if not (('autogen' == include) or ('config' == include)) %}
     {{ include }}
+    {%- endif %}
 {%- endfor %}
+)
+
+target_include_directories({{PROJECT_NAME}}-config INTERFACE
+    autogen
+    config
 )
 
 target_include_directories({{PROJECT_NAME}} PRIVATE
@@ -104,9 +111,29 @@ set_property(SOURCE {{source}} PROPERTY LANGUAGE C)
 # ==============================================================================
 # Compile definitions
 # ==============================================================================
+{%- set mbedtls_config_file = dict_get_value(C_CXX_DEFINES, "MBEDTLS_CONFIG_FILE") %}
+{%- set mbedtls_psa_crypto_config_file = dict_get_value(C_CXX_DEFINES, "MBEDTLS_PSA_CRYPTO_CONFIG_FILE") %}
+{%- if mbedtls_config_file or mbedtls_psa_crypto_config_file %}
 target_compile_definitions({{PROJECT_NAME}}-config INTERFACE
+{%- if mbedtls_config_file %}
+    {{mbedtls_config_file}}
+{%- endif %}
+{%- if mbedtls_psa_crypto_config_file %}
+    {{mbedtls_psa_crypto_config_file}}
+{%- endif %}
+)
+{%- endif %}
+
+target_compile_definitions(ot-config INTERFACE
 {%- for define in C_CXX_DEFINES %}
-    {%- if not ( define.startswith("MBEDTLS_PSA_CRYPTO_CLIENT") or ("OPENTHREAD_RADIO" == define) or ("OPENTHREAD_FTD" == define) or ("OPENTHREAD_MTD" == define) or ("OPENTHREAD_COPROCESSOR" == define) ) %}
+    {%- if not (
+            define.startswith("MBEDTLS_CONFIG_FILE") or
+            define.startswith("MBEDTLS_PSA_CRYPTO_CONFIG_FILE") or
+            ("OPENTHREAD_RADIO" == define) or
+            ("OPENTHREAD_FTD" == define) or
+            ("OPENTHREAD_MTD" == define) or
+            ("OPENTHREAD_COPROCESSOR" == define)
+    ) %}
     {{define}}={{C_CXX_DEFINES[define]}}
     {%- endif %}
 {%- endfor %}

@@ -20,16 +20,6 @@ component:
   - id: rail_util_pti
   - id: power_manager
 
-include:
-  - path: .
-    file_list:
-    - path: app.h
-
-source:
-  - path: main.c
-  - path: app.c
-  - path: sleepy-mtd.c
-
 configuration:
   - name: SL_BOARD_ENABLE_VCOM
     value: 1

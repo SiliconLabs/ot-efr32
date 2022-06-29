@@ -76,7 +76,7 @@ target_sources({{PROJECT_NAME}}-sdk PRIVATE
     {#- Ignore crypto sources, PAL sources, and openthread sources #}
     {%- if ('util/third_party/crypto/mbedtls' not in source)
             and ('${PROJECT_SOURCE_DIR}/src/src' not in source)
-            and ('${PROJECT_SOURCE_DIR}/openthread' not in source) %}
+            and ('openthread' not in source) %}
         {%- if source.endswith('.c') or source.endswith('.cpp') or source.endswith('.h') or source.endswith('.hpp') %}
     {{source}}
         {%- endif %}
@@ -90,7 +90,7 @@ target_sources({{PROJECT_NAME}}-sdk PRIVATE
     {#- Ignore crypto sources, PAL sources, and openthread sources #}
     {%- if ('util/third_party/crypto/mbedtls' not in source)
             and ('${PROJECT_SOURCE_DIR}/src/src' not in source)
-            and ('${PROJECT_SOURCE_DIR}/openthread' not in source) %}
+            and ('openthread' not in source) %}
         {%- if source.endswith('.s') or source.endswith('.S') %}
 
 target_sources({{PROJECT_NAME}}-sdk PRIVATE {{source}})
@@ -115,7 +115,11 @@ target_compile_options({{PROJECT_NAME}}-sdk PRIVATE
 # ==============================================================================
 target_link_libraries({{PROJECT_NAME}}-sdk
     PUBLIC
+{%- if PROJECT_NAME.startswith("sleepy-demo") %}
+        openthread-efr32-soc-mbedtls
+{%- else %}
         {{PROJECT_NAME}}-mbedtls
+{%- endif %}
     PRIVATE
 {%- for source in SYS_LIBS+USER_LIBS %}
         {{prepare_path(source)}}

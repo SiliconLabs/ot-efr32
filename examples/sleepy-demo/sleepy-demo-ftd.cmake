@@ -27,24 +27,19 @@
 #
 
 add_executable(sleepy-demo-ftd
-    ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
+    main.c
+    app.c
+    app.h
+    sleepy-ftd.c
 )
 
-target_include_directories(sleepy-demo-ftd PRIVATE ${COMMON_INCLUDES})
-
+set(sleepy-demo-ftd-lib_location $<TARGET_FILE:sleepy-demo-ftd-lib>)
 target_link_libraries(sleepy-demo-ftd PRIVATE
     openthread-cli-ftd
-    ${OT_PLATFORM_LIB}
-    openthread-ftd
-    ${OT_PLATFORM_LIB}
+    # The --whole-archive flags are necessary to resolve all symbols from the GSDK
+    -Wl,--start-group openthread-ftd ${sleepy-demo-ftd-lib_location} -Wl,--end-group
     ${OT_MBEDTLS}
     ot-config
-)
-
-
-target_compile_options(sleepy-demo-ftd
-    PRIVATE
-        ${EFR32_CFLAGS}
 )
 
 install(TARGETS sleepy-demo-ftd

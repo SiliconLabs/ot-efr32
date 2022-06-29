@@ -33,11 +33,12 @@ add_executable(sleepy-demo-ftd
     sleepy-ftd.c
 )
 
-set(sleepy-demo-ftd-lib_location $<TARGET_FILE:sleepy-demo-ftd-lib>)
+
 target_link_libraries(sleepy-demo-ftd PRIVATE
     openthread-cli-ftd
-    # The --whole-archive flags are necessary to resolve all symbols from the GSDK
-    -Wl,--start-group openthread-ftd ${sleepy-demo-ftd-lib_location} -Wl,--end-group
+    ${OT_PLATFORM_LIB}
+    openthread-ftd
+    ${OT_PLATFORM_LIB}
     ${OT_MBEDTLS}
     ot-config
 )

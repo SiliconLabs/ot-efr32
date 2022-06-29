@@ -13,6 +13,11 @@ component:
   - id: uartdrv_usart
     instance:
       - vcom
+  - id: simple_button
+    instance:
+      - btn0
+      - btn1
+  - id: power_manager
   - id: rail_util_pti
 
 configuration:

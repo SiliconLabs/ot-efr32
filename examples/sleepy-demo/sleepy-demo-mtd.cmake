@@ -31,7 +31,6 @@ add_executable(sleepy-demo-mtd
     main.c
 )
 
-target_include_directories(sleepy-demo-mtd PRIVATE ${COMMON_INCLUDES})
 
 target_link_libraries(sleepy-demo-mtd PRIVATE
     openthread-cli-mtd

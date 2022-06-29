@@ -95,26 +95,6 @@ build()
         mv "${current_project_export_dir}/openthread-efr32-soc.project.mak" "${current_project_export_dir}/openthread-efr32-soc-sdk.cmake"
 
         # ==============================================================================================================
-        # Generate sleepy-demo-ftd-lib and sleepy-demo-ftd-lib-sdk libs
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/sleepy-demo-ftd-lib"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/examples/sleepy-demo/sleepy-demo-ftd.slcp" \
-             -name="sleepy-demo-ftd-lib" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/sleepy-demo-ftd-lib.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        mv "${current_project_export_dir}/sleepy-demo-ftd-lib.project.mak" "${current_project_export_dir}/sleepy-demo-ftd-lib-sdk.cmake"
-
-        # ==============================================================================================================
         # Generate openthread-efr32-soc-mbedtls lib
         # ==============================================================================================================
         current_project_export_dir="${slc_generated_projects_dir}/soc/mbedtls"
@@ -134,44 +114,44 @@ build()
         rm "${current_project_export_dir}/openthread-efr32-soc.project.mak"
         rm -rf "${current_project_export_dir}"/{autogen,config}
 
-        # # ==============================================================================================================
-        # # Generate openthread-efr32-rcp and openthread-efr32-rcp-sdk libs
-        # # ==============================================================================================================
-        # current_project_export_dir="${slc_generated_projects_dir}/rcp/platform"
+        # ==============================================================================================================
+        # Generate openthread-efr32-rcp and openthread-efr32-rcp-sdk libs
+        # ==============================================================================================================
+        current_project_export_dir="${slc_generated_projects_dir}/rcp/platform"
 
-        # run_slc -v 1 generate \
-        #     --sdk="${sdk_dir}" \
-        #     --clear-cache \
-        #     --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
-        #     --output-type=makefile \
-        #     --no-copy \
-        #     --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
-        #     --export-destination="${current_project_export_dir}" \
-        #     --with "${board}"
+        run_slc -v 1 generate \
+            --sdk="${sdk_dir}" \
+            --clear-cache \
+            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
+            --output-type=makefile \
+            --no-copy \
+            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
+            --export-destination="${current_project_export_dir}" \
+            --with "${board}"
 
-        # # TODO: Remove this when slc supports generic jinja template generation
-        # mv "${current_project_export_dir}/openthread-efr32-rcp.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        # mv "${current_project_export_dir}/openthread-efr32-rcp.project.mak" "${current_project_export_dir}/openthread-efr32-rcp-sdk.cmake"
+        # TODO: Remove this when slc supports generic jinja template generation
+        mv "${current_project_export_dir}/openthread-efr32-rcp.Makefile" "${current_project_export_dir}/CMakeLists.txt"
+        mv "${current_project_export_dir}/openthread-efr32-rcp.project.mak" "${current_project_export_dir}/openthread-efr32-rcp-sdk.cmake"
 
-        # # ==============================================================================================================
-        # # Generate openthread-efr32-rcp-mbedtls lib
-        # # ==============================================================================================================
-        # current_project_export_dir="${slc_generated_projects_dir}/rcp/mbedtls"
+        # ==============================================================================================================
+        # Generate openthread-efr32-rcp-mbedtls lib
+        # ==============================================================================================================
+        current_project_export_dir="${slc_generated_projects_dir}/rcp/mbedtls"
 
-        # run_slc -v 1 generate \
-        #     --sdk="${sdk_dir}" \
-        #     --clear-cache \
-        #     --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
-        #     --output-type=makefile \
-        #     --no-copy \
-        #     --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
-        #     --export-destination="${current_project_export_dir}" \
-        #     --with "${board}"
+        run_slc -v 1 generate \
+            --sdk="${sdk_dir}" \
+            --clear-cache \
+            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
+            --output-type=makefile \
+            --no-copy \
+            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
+            --export-destination="${current_project_export_dir}" \
+            --with "${board}"
 
-        # # TODO: Remove this when slc supports generic jinja template generation
-        # mv "${current_project_export_dir}/openthread-efr32-rcp.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        # rm "${current_project_export_dir}/openthread-efr32-rcp.project.mak"
-        # rm -rf "${current_project_export_dir}"/{autogen,config}
+        # TODO: Remove this when slc supports generic jinja template generation
+        mv "${current_project_export_dir}/openthread-efr32-rcp.Makefile" "${current_project_export_dir}/CMakeLists.txt"
+        rm "${current_project_export_dir}/openthread-efr32-rcp.project.mak"
+        rm -rf "${current_project_export_dir}"/{autogen,config}
     fi
 
     cmake -GNinja -DOT_COMPILE_WARNING_AS_ERROR=ON "$@" "${repo_dir}"
@@ -266,7 +246,10 @@ main()
             OT_CMAKE_NINJA_TARGET=("ot-rcp")
             ;;
         efr32mg12 | efr32mg13 | efr32mg21 | efr32mg24)
-            OT_CMAKE_NINJA_TARGET=("sleepy-demo-ftd")
+            OT_CMAKE_NINJA_TARGET=("ot-rcp" "ot-cli-ftd" "ot-cli-mtd" "ot-ncp-ftd" "ot-ncp-mtd")
+            if [ "${skip_silabs_apps}" = false ]; then
+                OT_CMAKE_NINJA_TARGET+=("sleepy-demo-ftd" "sleepy-demo-mtd")
+            fi
             ;;
     esac
 

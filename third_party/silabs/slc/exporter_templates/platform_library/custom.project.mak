@@ -114,12 +114,6 @@ target_compile_options({{PROJECT_NAME}}-sdk PRIVATE
 # Linking
 # ==============================================================================
 target_link_libraries({{PROJECT_NAME}}-sdk
-    PUBLIC
-{%- if PROJECT_NAME.startswith("sleepy-demo") %}
-        openthread-efr32-soc-mbedtls
-{%- else %}
-        {{PROJECT_NAME}}-mbedtls
-{%- endif %}
     PRIVATE
 {%- for source in SYS_LIBS+USER_LIBS %}
         {{prepare_path(source)}}

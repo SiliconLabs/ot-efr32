@@ -29,9 +29,12 @@
 add_executable(sleepy-demo-mtd
     ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
     main.c
+    app.c
+    app.h
+    sleepy-mtd.c
 )
 
-target_include_directories(sleepy-demo-mtd PRIVATE ${COMMON_INCLUDES})
+# set(OT_PLATFORM_LIB "openthread-efr32-soc-with-buttons-power-manager")
 
 target_link_libraries(sleepy-demo-mtd PRIVATE
     openthread-cli-mtd

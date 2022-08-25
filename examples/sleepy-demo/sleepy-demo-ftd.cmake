@@ -29,9 +29,10 @@
 add_executable(sleepy-demo-ftd
     ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
     main.c
+    app.c
+    app.h
+    sleepy-ftd.c
 )
-
-target_include_directories(sleepy-demo-ftd PRIVATE ${COMMON_INCLUDES})
 
 target_link_libraries(sleepy-demo-ftd PRIVATE
     openthread-cli-ftd
@@ -40,12 +41,6 @@ target_link_libraries(sleepy-demo-ftd PRIVATE
     ${OT_PLATFORM_LIB}
     ${OT_MBEDTLS}
     ot-config
-)
-
-
-target_compile_options(sleepy-demo-ftd
-    PRIVATE
-        ${EFR32_CFLAGS}
 )
 
 install(TARGETS sleepy-demo-ftd

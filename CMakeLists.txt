@@ -90,12 +90,10 @@ target_compile_options(ot-config INTERFACE
 # Generated platform projects
 # ==============================================================================
 set(slc_generated_projects
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/platform-with-buttons-power-manager
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/platform-with-buttons
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/platform
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/mbedtls
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/platform
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/mbedtls
+    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc-with-buttons-power-manager
+    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc-with-buttons
+    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/
+    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/
 )
 
 foreach(slc_project IN LISTS slc_generated_projects)

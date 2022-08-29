@@ -82,7 +82,7 @@ generate()
         # ==============================================================================================================
         # Generate openthread-efr32-soc-with-buttons and openthread-efr32-soc-with-buttons-sdk libs
         # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons"
+        current_project_export_dir="${slc_generated_projects_dir}/soc-with-buttons"
         project_name="openthread-efr32-soc-with-buttons"
 
         run_slc -v 1 generate \
@@ -103,7 +103,7 @@ generate()
         # ==============================================================================================================
         # Generate openthread-efr32-soc-with-buttons-mbedtls lib
         # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons/mbedtls"
+        current_project_export_dir="${slc_generated_projects_dir}/soc-with-buttons/mbedtls"
 
         run_slc -v 1 generate \
             --sdk="${sdk_dir}" \
@@ -124,7 +124,7 @@ generate()
         # ==============================================================================================================
         # Generate openthread-efr32-soc-with-buttons-power-manager and openthread-efr32-soc-with-buttons-power-manager-sdk libs
         # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons-power-manager"
+        current_project_export_dir="${slc_generated_projects_dir}/soc-with-buttons-power-manager"
         project_name="openthread-efr32-soc-with-buttons-power-manager"
 
         run_slc -v 1 generate \
@@ -145,7 +145,7 @@ generate()
         # ==============================================================================================================
         # Generate openthread-efr32-soc-with-buttons-power-manager-mbedtls lib
         # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons-power-manager/mbedtls"
+        current_project_export_dir="${slc_generated_projects_dir}/soc-with-buttons-power-manager/mbedtls"
 
         run_slc -v 1 generate \
             --sdk="${sdk_dir}" \
@@ -163,6 +163,19 @@ generate()
         rm "${current_project_export_dir}/${project_name}.project.mak"
         rm -rf "${current_project_export_dir}"/{autogen,config}
     fi
+}
+
+create_srec()
+{
+    local executable_flag
+
+    if [ "$(uname)" = 'Linux' ]; then
+        executable_flag=(-executable)
+    elif [ "$(uname)" = 'Darwin' ]; then
+        executable_flag=(-perm +111)
+    fi
+
+    find "$1" -type f "${executable_flag[@]}" -not -name '*.*' -exec arm-none-eabi-objcopy -O srec {} {}.s37 \; -exec ls -alh {} {}.s37 \;
 }
 
 build_example_app()
@@ -188,20 +201,8 @@ build_example_app()
 
     ninja "${example_app_ninja_target}"
 
+    create_srec "${builddir}"
     cd "${repo_dir}"
-}
-
-create_srec()
-{
-    local executable_flag
-
-    if [ "$(uname)" = 'Linux' ]; then
-        executable_flag=(-executable)
-    elif [ "$(uname)" = 'Darwin' ]; then
-        executable_flag=(-perm +111)
-    fi
-
-    find "$1" -type f "${executable_flag[@]}" -not -name '*.*' -exec arm-none-eabi-objcopy -O srec {} {}.s37 \; -exec ls -alh {} {}.s37 \;
 }
 
 main()
@@ -268,9 +269,13 @@ main()
     options+=("$@")
     export OT_CMAKE_BUILD_DIR="$repo_dir/build/${board}"
 
-    # build_example_app sleepy-demo-ftd openthread-efr32-soc-with-buttons -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
-    build_example_app sleepy-demo-mtd openthread-efr32-soc-with-buttons-power-manager -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
-    create_srec "${builddir}"
+    build_example_app sleepy-demo-ftd openthread-efr32-soc-with-buttons \
+        -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
+    build_example_app sleepy-demo-mtd openthread-efr32-soc-with-buttons-power-manager \
+        -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
+
+    ls -alh "${OT_CMAKE_BUILD_DIR}"/examples/sleepy-demo-ftd/bin/* \
+            "${OT_CMAKE_BUILD_DIR}"/examples/sleepy-demo-mtd/bin/*
 }
 
 main "$@"

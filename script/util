@@ -1,5 +1,6 @@
+#!/bin/bash
 #
-#  Copyright (c) 2021, The OpenThread Authors.
+#  Copyright (c) 2022, The OpenThread Authors.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -26,24 +27,9 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 
-add_executable(sleepy-demo-ftd
-    ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
-    main.c
-    app.c
-    app.h
-    sleepy-ftd.c
-)
-
-target_link_libraries(sleepy-demo-ftd PRIVATE
-    openthread-cli-ftd
-    ${OT_PLATFORM_LIB}
-    openthread-ftd
-    ${OT_PLATFORM_LIB}
-    ${OT_MBEDTLS}
-    -Wl,-Map=sleepy-demo-ftd.map
-    ot-config
-)
-
-install(TARGETS sleepy-demo-ftd
-    DESTINATION bin)
-
+contains() {
+    local search_term=$1
+    shift 1
+    local list=$@
+    echo $list | grep -w -q -P $search_term
+}

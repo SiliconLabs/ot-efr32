@@ -47,6 +47,9 @@ source "$script_dir/efr32-definitions"
 # shellcheck source=script/slc_cli
 source "$script_dir/slc_cli"
 
+# shellcheck source=script/util
+source "$script_dir/util"
+
 # ==============================================================================
 OT_CMAKE_NINJA_TARGET=${OT_CMAKE_NINJA_TARGET:-}
 
@@ -63,104 +66,127 @@ die()
     exit 1
 }
 
-build()
+generate()
 {
-    builddir="${OT_CMAKE_BUILD_DIR:-$repo_dir/build/${board}}"
+    if [ "${skip_generation}" = true ]; then
+        return
+    fi
+
+    local slc_generated_projects_dir="${OT_CMAKE_BUILD_DIR}"/slc
+    local cmake_library="$1"
+    shift
+
+    run_slc -v 1 signature trust --sdk "${sdk_dir}"
+
+    if [[ ${cmake_library} == "openthread-efr32-soc-with-buttons" ]]; then
+        # ==============================================================================================================
+        # Generate openthread-efr32-soc-with-buttons and openthread-efr32-soc-with-buttons-sdk libs
+        # ==============================================================================================================
+        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons"
+        project_name="openthread-efr32-soc-with-buttons"
+
+        run_slc -v 1 generate \
+            --sdk="${sdk_dir}" \
+            --clear-cache \
+            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc-with-buttons.slcp" \
+            --project-name="${project_name}" \
+            --output-type=makefile \
+            --no-copy \
+            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
+            --export-destination="${current_project_export_dir}" \
+            --with "${board}"
+
+        # TODO: Remove this when slc supports generic jinja template generation
+        mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
+        mv "${current_project_export_dir}/${project_name}.project.mak" "${current_project_export_dir}/${project_name}-sdk.cmake"
+
+        # ==============================================================================================================
+        # Generate openthread-efr32-soc-with-buttons-mbedtls lib
+        # ==============================================================================================================
+        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons/mbedtls"
+
+        run_slc -v 1 generate \
+            --sdk="${sdk_dir}" \
+            --clear-cache \
+            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc-with-buttons.slcp" \
+            --project-name="${project_name}" \
+            --output-type=makefile \
+            --no-copy \
+            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
+            --export-destination="${current_project_export_dir}" \
+            --with "${board}"
+
+        # TODO: Remove this when slc supports generic jinja template generation
+        mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
+        rm "${current_project_export_dir}/${project_name}.project.mak"
+        rm -rf "${current_project_export_dir}"/{autogen,config}
+    elif [[ ${cmake_library} == "openthread-efr32-soc-with-buttons-power-manager" ]]; then
+        # ==============================================================================================================
+        # Generate openthread-efr32-soc-with-buttons-power-manager and openthread-efr32-soc-with-buttons-power-manager-sdk libs
+        # ==============================================================================================================
+        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons-power-manager"
+        project_name="openthread-efr32-soc-with-buttons-power-manager"
+
+        run_slc -v 1 generate \
+            --sdk="${sdk_dir}" \
+            --clear-cache \
+            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc-with-buttons.slcp" \
+            --project-name="${project_name}" \
+            --output-type=makefile \
+            --no-copy \
+            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
+            --export-destination="${current_project_export_dir}" \
+            --with "${board}",power_manager
+
+        # TODO: Remove this when slc supports generic jinja template generation
+        mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
+        mv "${current_project_export_dir}/${project_name}.project.mak" "${current_project_export_dir}/${project_name}-sdk.cmake"
+
+        # ==============================================================================================================
+        # Generate openthread-efr32-soc-with-buttons-power-manager-mbedtls lib
+        # ==============================================================================================================
+        current_project_export_dir="${slc_generated_projects_dir}/soc/platform-with-buttons-power-manager/mbedtls"
+
+        run_slc -v 1 generate \
+            --sdk="${sdk_dir}" \
+            --clear-cache \
+            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc-with-buttons.slcp" \
+            --project-name="${project_name}" \
+            --output-type=makefile \
+            --no-copy \
+            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
+            --export-destination="${current_project_export_dir}" \
+            --with "${board}"
+
+        # TODO: Remove this when slc supports generic jinja template generation
+        mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
+        rm "${current_project_export_dir}/${project_name}.project.mak"
+        rm -rf "${current_project_export_dir}"/{autogen,config}
+    fi
+}
+
+build_example_app()
+{
+    local example_app_ninja_target=${1:-}
+    local ot_platform_lib=${2:-}
+    shift 2
+
+    # Generate the platform lib and related libs
+    generate ${ot_platform_lib}
+
+    builddir="${OT_CMAKE_BUILD_DIR}/examples/${example_app_ninja_target}"
 
     mkdir -p "${builddir}"
     cd "${builddir}"
 
-    if [ "${skip_generation}" = false ]; then
-        local slc_generated_projects_dir="${builddir}"/slc
+    cmake -GNinja \
+        -DOT_COMPILE_WARNING_AS_ERROR=ON \
+        -DOT_PLATFORM_LIB="${ot_platform_lib}" \
+        -DOT_EXTERNAL_MBEDTLS="${ot_platform_lib}-mbedtls" \
+        "$@" \
+        "${repo_dir}"
 
-        run_slc -v 1 signature trust --sdk "${sdk_dir}"
-
-        # ==============================================================================================================
-        # Generate openthread-efr32-soc and openthread-efr32-soc-sdk libs
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/platform"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc.slcp" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/openthread-efr32-soc.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        mv "${current_project_export_dir}/openthread-efr32-soc.project.mak" "${current_project_export_dir}/openthread-efr32-soc-sdk.cmake"
-
-        # ==============================================================================================================
-        # Generate openthread-efr32-soc-mbedtls lib
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/mbedtls"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc.slcp" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/openthread-efr32-soc.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        rm "${current_project_export_dir}/openthread-efr32-soc.project.mak"
-        rm -rf "${current_project_export_dir}"/{autogen,config}
-
-        # ==============================================================================================================
-        # Generate openthread-efr32-rcp and openthread-efr32-rcp-sdk libs
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/rcp/platform"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/platform_library \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/openthread-efr32-rcp.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        mv "${current_project_export_dir}/openthread-efr32-rcp.project.mak" "${current_project_export_dir}/openthread-efr32-rcp-sdk.cmake"
-
-        # ==============================================================================================================
-        # Generate openthread-efr32-rcp-mbedtls lib
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/rcp/mbedtls"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/openthread-efr32-rcp.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        rm "${current_project_export_dir}/openthread-efr32-rcp.project.mak"
-        rm -rf "${current_project_export_dir}"/{autogen,config}
-    fi
-
-    cmake -GNinja -DOT_COMPILE_WARNING_AS_ERROR=ON "$@" "${repo_dir}"
-
-    if [[ -n ${OT_CMAKE_NINJA_TARGET[*]} ]]; then
-        ninja "${OT_CMAKE_NINJA_TARGET[@]}"
-    else
-        ninja
-    fi
+    ninja "${example_app_ninja_target}"
 
     cd "${repo_dir}"
 }
@@ -193,11 +219,6 @@ main()
                     skip-generation)
                         printf '\n\nSkipping SLC generation...\n\n' >&2
                         skip_generation=true
-                        shift 1
-                        ;;
-                    skip-silabs-apps)
-                        printf '\n\nSkipping silabs example apps...\n\n' >&2
-                        skip_silabs_apps=true
                         shift 1
                         ;;
                     *)
@@ -241,23 +262,14 @@ main()
 
     options+=("-DCMAKE_TOOLCHAIN_FILE=src/${platform}/arm-none-eabi.cmake")
 
-    case "${platform}" in
-        efr32mg1)
-            OT_CMAKE_NINJA_TARGET=("ot-rcp")
-            ;;
-        efr32mg12 | efr32mg13 | efr32mg21 | efr32mg24)
-            OT_CMAKE_NINJA_TARGET=("ot-rcp" "ot-cli-ftd" "ot-cli-mtd" "ot-ncp-ftd" "ot-ncp-mtd")
-            if [ "${skip_silabs_apps}" = false ]; then
-                ${repo_dir}/script/build_example_apps ${board} "$@"
-            fi
-            ;;
-    esac
-
     # Find slc-cli installation
     slc_init
 
     options+=("$@")
-    build -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
+    export OT_CMAKE_BUILD_DIR="$repo_dir/build/${board}"
+
+    # build_example_app sleepy-demo-ftd openthread-efr32-soc-with-buttons -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
+    build_example_app sleepy-demo-mtd openthread-efr32-soc-with-buttons-power-manager -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
     create_srec "${builddir}"
 }
 

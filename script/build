@@ -76,7 +76,7 @@ generate()
 
     run_slc -v 1 signature trust --sdk "${sdk_dir}"
 
-    if contains ".*-(ftd|mtd)" ${OT_CMAKE_NINJA_TARGET[@]}; then
+    if contains ".*-(ftd|mtd)" "${OT_CMAKE_NINJA_TARGET[@]}"; then
         # ==============================================================================================================
         # Generate openthread-efr32-soc and openthread-efr32-soc-sdk libs
         # ==============================================================================================================
@@ -119,7 +119,7 @@ generate()
         rm "${current_project_export_dir}/${project_name}.project.mak"
         rm -rf "${current_project_export_dir}"/{autogen,config}
     fi
-    if contains "ot-rcp" ${OT_CMAKE_NINJA_TARGET[@]}; then
+    if contains "ot-rcp" "${OT_CMAKE_NINJA_TARGET[@]}"; then
         # ==============================================================================================================
         # Generate openthread-efr32-rcp and openthread-efr32-rcp-sdk libs
         # ==============================================================================================================
@@ -269,7 +269,7 @@ main()
         efr32mg12 | efr32mg13 | efr32mg21 | efr32mg24)
             OT_CMAKE_NINJA_TARGET=("ot-rcp" "ot-cli-ftd" "ot-cli-mtd" "ot-ncp-ftd" "ot-ncp-mtd")
             if [ "${skip_silabs_apps}" = false ]; then
-                ${repo_dir}/script/build_example_apps ${board} "$@"
+                "${repo_dir}"/script/build_example_apps "${board}" "$@"
             fi
             ;;
     esac

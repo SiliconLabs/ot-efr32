@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file
  * @brief FTD application logic.
  *******************************************************************************
@@ -14,9 +14,11 @@
  * sections of the MSLA applicable to Source Code.
  *
  ******************************************************************************/
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 
+#include <common/code_utils.hpp>
+#include <common/logging.hpp>
 #include <openthread/cli.h>
 #include <openthread/dataset_ftd.h>
 #include <openthread/instance.h>
@@ -24,8 +26,6 @@
 #include <openthread/thread.h>
 #include <openthread/udp.h>
 #include <openthread/platform/logging.h>
-#include <common/code_utils.hpp>
-#include <common/logging.hpp>
 
 #include "sl_button.h"
 #include "sl_simple_button.h"
@@ -41,14 +41,14 @@
 
 // Forward declarations
 otInstance *otGetInstance(void);
-void sFtdReceiveCallback(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo);
+void        sFtdReceiveCallback(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo);
 extern void otSysEventSignalPending(void);
 
 // Variables
-static otUdpSocket         sFtdSocket;
-static bool                sHaveSwitchAddress = false;
-static otIp6Address        sSwitchAddress;
-static bool                sFtdButtonPressed  = false;
+static otUdpSocket  sFtdSocket;
+static bool         sHaveSwitchAddress = false;
+static otIp6Address sSwitchAddress;
+static bool         sFtdButtonPressed = false;
 
 void sleepyInit(void)
 {
@@ -151,8 +151,8 @@ void sl_button_on_change(const sl_button_t *handle)
 void applicationTick(void)
 {
     otMessageInfo messageInfo;
-    otMessage    *message = NULL;
-    const char   *payload = FTD_MESSAGE;
+    otMessage *   message = NULL;
+    const char *  payload = FTD_MESSAGE;
 
     // Check for button press
     if (sFtdButtonPressed)

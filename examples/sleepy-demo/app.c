@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file
  * @brief Core application logic.
  *******************************************************************************
@@ -23,8 +23,8 @@
 #include <openthread/tasklet.h>
 #include <openthread/thread.h>
 
-#include "openthread-system.h"
 #include "app.h"
+#include "openthread-system.h"
 
 #include "sl_component_catalog.h"
 
@@ -41,7 +41,7 @@ void applicationTick(void);
  */
 extern void otAppCliInit(otInstance *aInstance);
 
-static otInstance* sInstance = NULL;
+static otInstance *sInstance = NULL;
 
 otInstance *otGetInstance(void)
 {
@@ -90,7 +90,7 @@ void sl_ot_cli_init(void)
     otAppCliInit(sInstance);
 }
 
-/**************************************************************************//**
+/******************************************************************************
  * Application Init.
  *****************************************************************************/
 
@@ -103,7 +103,7 @@ void app_init(void)
     assert(otThreadSetEnabled(sInstance, true) == OT_ERROR_NONE);
 }
 
-/**************************************************************************//**
+/******************************************************************************
  * Application Process Action.
  *****************************************************************************/
 void app_process_action(void)
@@ -113,7 +113,7 @@ void app_process_action(void)
     applicationTick();
 }
 
-/**************************************************************************//**
+/******************************************************************************
  * Application Exit.
  *****************************************************************************/
 void app_exit(void)

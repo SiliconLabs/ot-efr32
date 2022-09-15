@@ -27,9 +27,10 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 
-contains() {
+contains()
+{
     local search_term=$1
     shift 1
-    local list=$@
-    echo $list | grep -w -q -P $search_term
+    IFS=" " read -r -a list <<<"$@"
+    echo "${list[@]}" | grep -w -q -P "$search_term"
 }

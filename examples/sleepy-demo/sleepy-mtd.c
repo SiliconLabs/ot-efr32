@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file
  * @brief MTD application logic.
  *******************************************************************************
@@ -15,11 +15,13 @@
  *
  ******************************************************************************/
 // Define module name for Power Manager debuging feature.
-#define CURRENT_MODULE_NAME    "OPENTHREAD_SAMPLE_APP"
+#define CURRENT_MODULE_NAME "OPENTHREAD_SAMPLE_APP"
 
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 
+#include <common/code_utils.hpp>
+#include <common/logging.hpp>
 #include <openthread/cli.h>
 #include <openthread/dataset_ftd.h>
 #include <openthread/instance.h>
@@ -27,8 +29,6 @@
 #include <openthread/thread.h>
 #include <openthread/udp.h>
 #include <openthread/platform/logging.h>
-#include <common/code_utils.hpp>
-#include <common/logging.hpp>
 
 #include "sl_button.h"
 #include "sl_simple_button.h"
@@ -49,14 +49,14 @@
 
 // Forward declarations
 otInstance *otGetInstance(void);
-void mtdReceiveCallback(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo);
+void        mtdReceiveCallback(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo);
 extern void otSysEventSignalPending(void);
 
 // Variables
-static otUdpSocket         sMtdSocket;
-static bool                sButtonPressed                 = false;
-static bool                sRxOnIdleButtonPressed         = false;
-static bool                sAllowSleep                    = false;
+static otUdpSocket sMtdSocket;
+static bool        sButtonPressed         = false;
+static bool        sRxOnIdleButtonPressed = false;
+static bool        sAllowSleep            = false;
 
 void sleepyInit(void)
 {
@@ -191,8 +191,8 @@ void applicationTick(void)
 {
     otLinkModeConfig config;
     otMessageInfo    messageInfo;
-    otMessage       *message = NULL;
-    const char      *payload = MTD_MESSAGE;
+    otMessage *      message = NULL;
+    const char *     payload = MTD_MESSAGE;
 
     // Check for BTN0 button press
     if (sRxOnIdleButtonPressed)

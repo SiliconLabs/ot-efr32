@@ -185,7 +185,7 @@ build_example_app()
     shift 2
 
     # Generate the platform lib and related libs
-    generate ${ot_platform_lib}
+    generate "${ot_platform_lib}"
 
     builddir="${OT_CMAKE_BUILD_DIR}/examples/${example_app_ninja_target}"
 
@@ -275,7 +275,7 @@ main()
         -DEFR32_PLATFORM="${platform}" -DBOARD="${board}" "${options[@]}"
 
     ls -alh "${OT_CMAKE_BUILD_DIR}"/examples/sleepy-demo-ftd/bin/* \
-            "${OT_CMAKE_BUILD_DIR}"/examples/sleepy-demo-mtd/bin/*
+        "${OT_CMAKE_BUILD_DIR}"/examples/sleepy-demo-mtd/bin/*
 }
 
 main "$@"

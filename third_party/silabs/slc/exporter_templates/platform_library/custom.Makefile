@@ -166,6 +166,23 @@ target_include_directories({{PROJECT_NAME}}-mbedtls-config INTERFACE
 target_link_libraries({{PROJECT_NAME}}-mbedtls PRIVATE {{PROJECT_NAME}}-mbedtls-config)
 target_link_libraries({{PROJECT_NAME}} PRIVATE {{PROJECT_NAME}}-mbedtls-config)
 
+{% if PROJECT_NAME.endswith("-rcp") -%}
+target_link_libraries(ot-config-radio INTERFACE {{PROJECT_NAME}}-mbedtls-config)
+target_link_libraries(ot-config-radio INTERFACE {{PROJECT_NAME}}-config)
+{% elif PROJECT_NAME.endswith("-ftd") -%}
+target_link_libraries(ot-config-ftd INTERFACE {{PROJECT_NAME}}-mbedtls-config)
+target_link_libraries(ot-config-ftd INTERFACE {{PROJECT_NAME}}-config)
+{% elif PROJECT_NAME.endswith("-mtd") -%}
+target_link_libraries(ot-config-mtd INTERFACE {{PROJECT_NAME}}-mbedtls-config)
+target_link_libraries(ot-config-mtd INTERFACE {{PROJECT_NAME}}-config)
+{% elif PROJECT_NAME.endswith("-soc") -%}
+target_link_libraries(ot-config-ftd INTERFACE {{PROJECT_NAME}}-mbedtls-config)
+target_link_libraries(ot-config-mtd INTERFACE {{PROJECT_NAME}}-mbedtls-config)
+target_link_libraries(ot-config-ftd INTERFACE {{PROJECT_NAME}}-config)
+target_link_libraries(ot-config-mtd INTERFACE {{PROJECT_NAME}}-config)
+
+{% endif -%}
+
 {% endif -%}
 
 {% if dict_contains_key_starting_with(C_CXX_DEFINES, "MBEDTLS_PSA_CRYPTO_CLIENT") -%}

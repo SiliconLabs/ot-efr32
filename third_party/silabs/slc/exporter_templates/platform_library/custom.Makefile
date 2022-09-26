@@ -41,7 +41,7 @@
     with context -%}
 
 include(${PROJECT_SOURCE_DIR}/third_party/silabs/cmake/utility.cmake)
-add_subdirectory(mbedtls)
+include({{PROJECT_NAME}}-mbedtls.cmake)
 
 # ==============================================================================
 # Platform library

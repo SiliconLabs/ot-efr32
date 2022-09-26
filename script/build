@@ -78,7 +78,7 @@ generate()
 
     if contains ".*-(ftd|mtd)" "${OT_CMAKE_NINJA_TARGET[@]}"; then
         # ==============================================================================================================
-        # Generate openthread-efr32-soc and openthread-efr32-soc-sdk libs
+        # Generate openthread-efr32-soc and openthread-efr32-soc-mbedtls libs
         # ==============================================================================================================
         current_project_export_dir="${slc_generated_projects_dir}/soc"
         project_name="openthread-efr32-soc"
@@ -96,32 +96,11 @@ generate()
 
         # TODO: Remove this when slc supports generic jinja template generation
         mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        mv "${current_project_export_dir}/${project_name}.project.mak" "${current_project_export_dir}/${project_name}-sdk.cmake"
-
-        # ==============================================================================================================
-        # Generate openthread-efr32-soc-mbedtls lib
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/soc/mbedtls"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-soc.slcp" \
-            --project-name="${project_name}" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        rm "${current_project_export_dir}/${project_name}.project.mak"
-        rm -rf "${current_project_export_dir}"/{autogen,config}
+        mv "${current_project_export_dir}/${project_name}.project.mak" "${current_project_export_dir}/${project_name}-mbedtls.cmake"
     fi
     if contains "ot-rcp" "${OT_CMAKE_NINJA_TARGET[@]}"; then
         # ==============================================================================================================
-        # Generate openthread-efr32-rcp and openthread-efr32-rcp-sdk libs
+        # Generate openthread-efr32-rcp and openthread-efr32-rcp-mbedtls libs
         # ==============================================================================================================
         current_project_export_dir="${slc_generated_projects_dir}/rcp"
         project_name="openthread-efr32-rcp"
@@ -139,28 +118,8 @@ generate()
 
         # TODO: Remove this when slc supports generic jinja template generation
         mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        mv "${current_project_export_dir}/${project_name}.project.mak" "${current_project_export_dir}/${project_name}-sdk.cmake"
+        mv "${current_project_export_dir}/${project_name}.project.mak" "${current_project_export_dir}/${project_name}-mbedtls.cmake"
 
-        # ==============================================================================================================
-        # Generate openthread-efr32-rcp-mbedtls lib
-        # ==============================================================================================================
-        current_project_export_dir="${slc_generated_projects_dir}/rcp/mbedtls"
-
-        run_slc -v 1 generate \
-            --sdk="${sdk_dir}" \
-            --clear-cache \
-            --project-file="${repo_dir}/src/platform_projects/openthread-efr32-rcp.slcp" \
-            --project-name="${project_name}" \
-            --output-type=makefile \
-            --no-copy \
-            --export-templates="${repo_dir}"/third_party/silabs/slc/exporter_templates/mbedtls \
-            --export-destination="${current_project_export_dir}" \
-            --with "${board}"
-
-        # TODO: Remove this when slc supports generic jinja template generation
-        mv "${current_project_export_dir}/${project_name}.Makefile" "${current_project_export_dir}/CMakeLists.txt"
-        rm "${current_project_export_dir}/${project_name}.project.mak"
-        rm -rf "${current_project_export_dir}"/{autogen,config}
     fi
 }
 

@@ -80,10 +80,10 @@ target_compile_options(ot-config INTERFACE
 # Generated platform projects
 # ==============================================================================
 set(slc_generated_projects
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/platform
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/soc/mbedtls
-    ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/platform
     ${PROJECT_SOURCE_DIR}/build/${BOARD_LOWERCASE}/slc/rcp/mbedtls
+    ${PROJECT_SOURCE_DIR}/src/platform_libs/openthread-efr32-soc-eero
+    ${PROJECT_SOURCE_DIR}/src/platform_libs/openthread-efr32-rcp-eero
 )
 
 foreach(slc_project IN LISTS slc_generated_projects)

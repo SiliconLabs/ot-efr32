@@ -26,6 +26,8 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 
+set(sleepy_demo_dir ${PROJECT_SOURCE_DIR}/third_party/silabs/gecko_sdk/protocol/openthread/sample-apps/sleepy-demo)
+
 if(OT_FTD)
     include(sleepy-demo-ftd.cmake)
 endif()

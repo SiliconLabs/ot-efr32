@@ -28,10 +28,10 @@
 
 add_executable(sleepy-demo-ftd
     ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
-    main.c
-    app.c
-    app.h
-    sleepy-ftd.c
+    ${sleepy_demo_dir}/main.c
+    ${sleepy_demo_dir}/app.c
+    ${sleepy_demo_dir}/app.h
+    ${sleepy_demo_dir}/sleepy-ftd.c
 )
 
 target_link_libraries(sleepy-demo-ftd PRIVATE

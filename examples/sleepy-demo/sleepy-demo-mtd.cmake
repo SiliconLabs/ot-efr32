@@ -28,10 +28,10 @@
 
 add_executable(sleepy-demo-mtd
     ${PROJECT_SOURCE_DIR}/openthread/examples/apps/cli/cli_uart.cpp
-    main.c
-    app.c
-    app.h
-    sleepy-mtd.c
+    ${sleepy_demo_dir}/main.c
+    ${sleepy_demo_dir}/app.c
+    ${sleepy_demo_dir}/app.h
+    ${sleepy_demo_dir}/sleepy-mtd.c
 )
 
 target_link_libraries(sleepy-demo-mtd PRIVATE

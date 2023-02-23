@@ -29,12 +29,10 @@
 name: Build
 
 on:
-  push:
-    branches-ignore:
-      - 'dependabot/**'
-  pull_request:
-    branches:
-      - 'main'
+  workflow_run:
+    workflows: ["Checks"]
+    types:
+      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || (github.repository == 'openthread/ot-efr32' && github.run_id) || github.ref }}

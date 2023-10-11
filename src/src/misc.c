@@ -33,6 +33,14 @@
 
 #include <openthread/platform/misc.h>
 
+#if defined(SL_COMPONENT_CATALOG_PRESENT)
+#include "sl_component_catalog.h"
+#endif
+
+#if (defined(SL_CATALOG_GECKO_BOOTLOADER_INTERFACE_PRESENT) && OPENTHREAD_CONFIG_PLATFORM_BOOTLOADER_MODE_ENABLE)
+#include "btl_interface.h"
+#endif
+
 #include "em_rmu.h"
 #include "platform-efr32.h"
 
@@ -52,6 +60,14 @@ void otPlatReset(otInstance *aInstance)
     OT_UNUSED_VARIABLE(aInstance);
     NVIC_SystemReset();
 }
+
+#if (defined(SL_CATALOG_GECKO_BOOTLOADER_INTERFACE_PRESENT) && OPENTHREAD_CONFIG_PLATFORM_BOOTLOADER_MODE_ENABLE)
+void otPlatResetToBootloader(otInstance *aInstance)
+{
+    OT_UNUSED_VARIABLE(aInstance);
+    bootloader_rebootAndInstall();
+}
+#endif
 
 otPlatResetReason otPlatGetResetReason(otInstance *aInstance)
 {

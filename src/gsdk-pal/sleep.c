@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2019, The OpenThread Authors.
+ *  Copyright (c) 2023, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -48,14 +48,16 @@
 #endif // SL_CATALOG_POWER_MANAGER_PRESENT
 
 // Power manager transition events of interest.
-#define POWER_MANAGER_EVENTS_OF_INTEREST            \
-  (SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM0   \
-   | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM0  \
-   | SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM1 \
-   | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM1  \
-   | SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM2 \
-   | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM2)
- 
+/* clang-format off */
+#define POWER_MANAGER_EVENTS_OF_INTEREST              \
+    (SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM0   \
+     | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM0  \
+     | SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM1 \
+     | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM1  \
+     | SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM2 \
+     | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM2)
+/* clang-format on */
+
 //------------------------------------------------------------------------------
 // Forward declarations
 
@@ -172,11 +174,13 @@ bool sl_ot_is_ok_to_sleep(void)
 static void energy_mode_transition_callback(sl_power_manager_em_t from, sl_power_manager_em_t to)
 {
     if (from == SL_POWER_MANAGER_EM2)
-    {   // Leaving EM2
+    {
+        // Leaving EM2
         // emberStackPowerUp(); // TO DO: Do we need to take care of any state?
     }
     else if (to == SL_POWER_MANAGER_EM2)
-    {   // Going to EM2
+    {
+        // Going to EM2
         // emberStackPowerDown(); // TO DO: Do we need to take care of any state?
     }
 }

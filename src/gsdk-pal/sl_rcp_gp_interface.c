@@ -1,18 +1,34 @@
-/***************************************************************************//**
+/*
+ *  Copyright (c) 2023, The OpenThread Authors.
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. Neither the name of the copyright holder nor the
+ *     names of its contributors may be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ *  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ *  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ *  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ *  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*******************************************************************************
  * @file
  * @brief This file implements Green Power interface.
- *******************************************************************************
- * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
- *******************************************************************************
- *
- * The licensor of this software is Silicon Laboratories Inc. Your use of this
- * software is governed by the terms of Silicon Labs Master Software License
- * Agreement (MSLA) available at
- * www.silabs.com/about-us/legal/master-software-license-agreement. This
- * software is distributed to you in Source Code format and is governed by the
- * sections of the MSLA applicable to Source Code.
- *
  ******************************************************************************/
 
 #include "sl_rcp_gp_interface.h"
@@ -25,6 +41,7 @@
 #include <string.h>
 #include <openthread/platform/time.h>
 #include "common/logging.hpp"
+#include "utils/mac_frame.h"
 
 // This implements mechanism to buffer outgoing Channel Configuration (0xF3) and
 // Commissioning Reply (0xF0) GPDF commands on the RCP to sent out on request
@@ -133,11 +150,13 @@ bool sl_gp_intf_is_gp_pkt(otRadioFrame *aFrame, bool isRxFrame)
     uint8_t *gpFrameStartIndex = efr32GetPayload(aFrame);
 
     // A Typical MAC Frame with GP NWK Frame in it
+    /* clang-format off */
     // MAC Frame  : [<---------------MAC Header------------->||<------------------------------------NWK Frame----------------------------------->]
     //               FC(2) | Seq(1) | DstPan(2) | DstAddr(2) || FC(1) | ExtFC(0/1) | SrcId(0/4) | SecFc(0/4) | MIC(0/4) | <------GPDF(1/n)------>
     // The Green Power NWK FC and Ext FC are described as :
     //              FC    : ExtFC Present(b7)=1| AC(b6)=0| Protocol Ver(b5-b2)=3 GP frames| Frame Type(b1-b0) = 0
     //              ExtFC :  rxAfteTX (b6) = 1 |  AppId(b2-b0) = 0
+    /* clang-format on */
 
     uint8_t fc = *gpFrameStartIndex;
 
@@ -177,10 +196,11 @@ bool sl_gp_intf_is_gp_pkt(otRadioFrame *aFrame, bool isRxFrame)
                               isRxFrame ? "Rx" : "Tx");
             }
         }
-        else if (GP_NWK_FRAME_TYPE_DATA_WITH_EXTD_FC(
-                     fc) // Data frame with EXT FC present, extract the App Id, SrcId, direction and command Id
-                 && aFrame->mLength
-                        >= GP_MIN_DATA_FRAME_LENGTH) // Minimum Data frame length with extended header and address
+        else if (
+            // Data frame with EXT FC present, extract the App Id, SrcId, direction and command Id
+            GP_NWK_FRAME_TYPE_DATA_WITH_EXTD_FC(fc) &&
+            // Minimum Data frame length with extended header and address
+            aFrame->mLength >= GP_MIN_DATA_FRAME_LENGTH)
         {
             uint8_t extFc = *(gpFrameStartIndex + GP_EXND_FC_INDEX);
 

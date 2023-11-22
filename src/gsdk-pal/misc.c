@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2019, The OpenThread Authors.
+ *  Copyright (c) 2023, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -80,9 +80,13 @@ otPlatResetReason otPlatGetResetReason(otInstance *aInstance)
     {
         reason = OT_PLAT_RESET_REASON_FAULT;
     }
-    else if ((sResetCause & EMU_RSTCAUSE_AVDDBOD) || (sResetCause & EMU_RSTCAUSE_DECBOD)
-             || (sResetCause & EMU_RSTCAUSE_DVDDBOD) || (sResetCause & EMU_RSTCAUSE_DVDDLEBOD)
+    /* clang-format off */
+    else if ((sResetCause & EMU_RSTCAUSE_AVDDBOD)
+             || (sResetCause & EMU_RSTCAUSE_DECBOD)
+             || (sResetCause & EMU_RSTCAUSE_DVDDBOD)
+             || (sResetCause & EMU_RSTCAUSE_DVDDLEBOD)
              || (sResetCause & EMU_RSTCAUSE_EM4))
+    /* clang-format on */
     {
         reason = OT_PLAT_RESET_REASON_OTHER;
     }
@@ -108,8 +112,12 @@ otPlatResetReason otPlatGetResetReason(otInstance *aInstance)
     {
         reason = OT_PLAT_RESET_REASON_FAULT;
     }
-    else if ((sResetCause & RMU_RSTCAUSE_AVDDBOD) || (sResetCause & RMU_RSTCAUSE_DECBOD)
-             || (sResetCause & RMU_RSTCAUSE_DVDDBOD) || (sResetCause & RMU_RSTCAUSE_EM4RST))
+    /* clang-format off */
+    else if ((sResetCause & RMU_RSTCAUSE_AVDDBOD)
+             || (sResetCause & RMU_RSTCAUSE_DECBOD)
+             || (sResetCause & RMU_RSTCAUSE_DVDDBOD)
+             || (sResetCause & RMU_RSTCAUSE_EM4RST))
+    /* clang-format on */
     {
         reason = OT_PLAT_RESET_REASON_OTHER;
     }
@@ -142,4 +150,22 @@ OT_TOOL_WEAK void otCliPlatLogv(otLogLevel aLogLevel, otLogRegion aLogRegion, co
 OT_TOOL_WEAK void efr32UartProcess(void)
 {
     // do nothing
+}
+
+otError railStatusToOtError(RAIL_Status_t status)
+{
+    switch (status)
+    {
+    case RAIL_STATUS_NO_ERROR:
+        return OT_ERROR_NONE;
+    case RAIL_STATUS_INVALID_PARAMETER:
+        return OT_ERROR_INVALID_ARGS;
+    case RAIL_STATUS_INVALID_STATE:
+        return OT_ERROR_INVALID_STATE;
+    case RAIL_STATUS_INVALID_CALL:
+    case RAIL_STATUS_SUSPENDED:
+    case RAIL_STATUS_SCHED_ERROR:
+    default:
+        return OT_ERROR_FAILED;
+    }
 }

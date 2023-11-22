@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, The OpenThread Authors.
+ *  Copyright (c) 2023, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -37,11 +37,11 @@
 #endif // SL_COMPONENT_CATALOG_PRESENT
 
 #include "em_core.h"
-#include "openthread-system.h"
 #include "sl_uartdrv_instances.h"
 #include "sl_uartdrv_usart_vcom_config.h"
 #include "uartdrv.h"
 #include <openthread-core-config.h>
+#include <openthread-system.h>
 #include <stddef.h>
 #include <string.h>
 #include "utils/code_utils.h"
@@ -131,6 +131,7 @@ static void processReceive(void)
 {
     uint8_t        *aData;
     UARTDRV_Count_t aCount, remaining;
+
     CORE_ATOMIC_SECTION(UARTDRV_GetReceiveStatus(sl_uartdrv_usart_vcom_handle, &aData, &aCount, &remaining);
                         if (aCount > lastCount) {
                             memcpy(sReceiveFifo.mBuffer + sReceiveFifo.mTail, aData + lastCount, aCount - lastCount);

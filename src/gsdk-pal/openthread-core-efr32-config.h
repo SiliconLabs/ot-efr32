@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2020, The OpenThread Authors.
+ *  Copyright (c) 2023, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@
 #endif
 
 #include "board_config.h"
-#include "em_msc.h"
+#include "em_device.h"
 
 /**
  * @def OPENTHREAD_CONFIG_PLATFORM_MAC_KEYS_EXPORTABLE_ENABLE
@@ -414,7 +414,11 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+#if OPENTHREAD_RADIO
+#define OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE 0
+#else
 #define OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE 1
+#endif
 #endif
 
 /**

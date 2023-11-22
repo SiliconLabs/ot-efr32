@@ -32,11 +32,11 @@
  *
  */
 
+#include "openthread-system.h"
 #include <assert.h>
+#include <openthread-core-config.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "openthread-system.h"
-#include <openthread-core-config.h>
 #include <openthread/platform/alarm-micro.h>
 #include <openthread/platform/alarm-milli.h>
 #include <openthread/platform/diag.h>
@@ -67,14 +67,12 @@ static void AlarmCallback(sl_sleeptimer_timer_handle_t *aHandle, void *aData)
     otSysEventSignalPending();
 }
 
-static void radioTimerExpired(struct RAIL_MultiTimer *tmr,
-                              RAIL_Time_t expectedTimeOfEvent,
-                              void *cbArg)
+static void radioTimerExpired(struct RAIL_MultiTimer *tmr, RAIL_Time_t expectedTimeOfEvent, void *cbArg)
 {
     OT_UNUSED_VARIABLE(tmr);
     OT_UNUSED_VARIABLE(expectedTimeOfEvent);
     OT_UNUSED_VARIABLE(cbArg);
-    
+
     otSysEventSignalPending();
 }
 
@@ -118,7 +116,7 @@ void otPlatAlarmMilliStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
     sl_sleeptimer_stop_timer(&sl_handle);
 
     sMsAlarm     = aT0 + aDt;
-    remaining  = (int32_t)(sMsAlarm - otPlatAlarmMilliGetNow());
+    remaining    = (int32_t)(sMsAlarm - otPlatAlarmMilliGetNow());
     sIsMsRunning = true;
 
     if (remaining <= 0)
@@ -140,7 +138,7 @@ void otPlatAlarmMilliStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
 uint32_t efr32AlarmPendingTime(void)
 {
     uint32_t remaining = 0;
-    uint32_t now = otPlatAlarmMilliGetNow();
+    uint32_t now       = otPlatAlarmMilliGetNow();
     if (sIsMsRunning && (sMsAlarm > now))
     {
         remaining = sMsAlarm - now;
@@ -150,7 +148,7 @@ uint32_t efr32AlarmPendingTime(void)
 
 bool efr32AlarmIsRunning(otInstance *aInstance)
 {
-    return (otInstanceIsInitialized(aInstance) ? sIsMsRunning :  false);
+    return (otInstanceIsInitialized(aInstance) ? sIsMsRunning : false);
 }
 
 void otPlatAlarmMilliStop(otInstance *aInstance)
@@ -164,7 +162,7 @@ void otPlatAlarmMilliStop(otInstance *aInstance)
 void efr32AlarmProcess(otInstance *aInstance)
 {
     int32_t remaining;
-    bool alarmMilliFired = false;
+    bool    alarmMilliFired = false;
 #if OPENTHREAD_CONFIG_PLATFORM_USEC_TIMER_ENABLE
     bool alarmMicroFired = false;
 #endif
@@ -227,20 +225,21 @@ uint32_t otPlatAlarmMicroGetNow(void)
 // period for the wrap-around logic to work below
 uint64_t otPlatTimeGet(void)
 {
-  static uint32_t timerWraps = 0U;
-  static uint32_t prev32TimeUs = 0U;
-  uint32_t now32TimeUs;
-  uint64_t now64TimeUs;
-  CORE_DECLARE_IRQ_STATE;
-  CORE_ENTER_CRITICAL();
-  now32TimeUs = RAIL_GetTime();
-  if (now32TimeUs < prev32TimeUs) {
-    timerWraps += 1U;
-  }
-  prev32TimeUs = now32TimeUs;
-  now64TimeUs = ((uint64_t)timerWraps << 32) + now32TimeUs;
-  CORE_EXIT_CRITICAL();
-  return now64TimeUs;
+    static uint32_t timerWraps   = 0U;
+    static uint32_t prev32TimeUs = 0U;
+    uint32_t        now32TimeUs;
+    uint64_t        now64TimeUs;
+    CORE_DECLARE_IRQ_STATE;
+    CORE_ENTER_CRITICAL();
+    now32TimeUs = RAIL_GetTime();
+    if (now32TimeUs < prev32TimeUs)
+    {
+        timerWraps += 1U;
+    }
+    prev32TimeUs = now32TimeUs;
+    now64TimeUs  = ((uint64_t)timerWraps << 32) + now32TimeUs;
+    CORE_EXIT_CRITICAL();
+    return now64TimeUs;
 }
 
 void otPlatAlarmMicroStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
@@ -261,11 +260,7 @@ void otPlatAlarmMicroStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
     }
     else
     {
-        status = RAIL_SetMultiTimer(&rail_timer,
-                                    remaining,
-                                    RAIL_TIME_DELAY,
-                                    radioTimerExpired,
-                                    NULL);
+        status = RAIL_SetMultiTimer(&rail_timer, remaining, RAIL_TIME_DELAY, radioTimerExpired, NULL);
         assert(status == RAIL_STATUS_NO_ERROR);
     }
 }

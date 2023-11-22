@@ -44,13 +44,13 @@
 #endif
 
 // Use (user defined) application config file to define OpenThread configurations
-#ifdef   SL_OPENTHREAD_APPLICATION_CONFIG_FILE
+#ifdef SL_OPENTHREAD_APPLICATION_CONFIG_FILE
 #include SL_OPENTHREAD_APPLICATION_CONFIG_FILE
 #endif
 
 // Use (pre-defined) stack features config file available for applications built
 // with Simplicity Studio
-#ifdef   SL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE
+#ifdef SL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE
 #include SL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE
 #endif
 
@@ -118,7 +118,7 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE
-#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE 	23
+#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE 23
 #endif
 
 /**
@@ -128,7 +128,7 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MIN
-#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MIN 	0
+#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MIN 0
 #endif
 
 /**
@@ -138,7 +138,7 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MAX
-#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MAX 	24
+#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MAX 24
 #endif
 
 /**
@@ -148,7 +148,7 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MASK
-#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MASK 	0x1ffffff
+#define OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MASK 0x1ffffff
 #endif
 
 /**
@@ -221,9 +221,9 @@
  */
 #ifndef OPENTHREAD_CONFIG_MIN_RECEIVE_ON_AHEAD
 #if RADIO_CONFIG_SUBGHZ_SUPPORT
-  #define OPENTHREAD_CONFIG_MIN_RECEIVE_ON_AHEAD 256
+#define OPENTHREAD_CONFIG_MIN_RECEIVE_ON_AHEAD 256
 #else
-  #define OPENTHREAD_CONFIG_MIN_RECEIVE_ON_AHEAD 192
+#define OPENTHREAD_CONFIG_MIN_RECEIVE_ON_AHEAD 192
 #endif
 #endif
 
@@ -272,7 +272,8 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_MAC_SOFTWARE_TX_SECURITY_ENABLE
-#define OPENTHREAD_CONFIG_MAC_SOFTWARE_TX_SECURITY_ENABLE (OPENTHREAD_RADIO && (OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_2))
+#define OPENTHREAD_CONFIG_MAC_SOFTWARE_TX_SECURITY_ENABLE \
+    (OPENTHREAD_RADIO && (OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_2))
 #endif
 
 /**
@@ -287,12 +288,12 @@
 #endif
 
 /**
-  * @def OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_TIMING_ENABLE
-  *
-  * Define to 1 to enable software reception target time logic.
-  * RCPs only.
-  *
-  */
+ * @def OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_TIMING_ENABLE
+ *
+ * Define to 1 to enable software reception target time logic.
+ * RCPs only.
+ *
+ */
 #ifndef OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_TIMING_ENABLE
 #define OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_TIMING_ENABLE 0
 #endif
@@ -331,11 +332,11 @@
 #endif
 
 /**
-  * @def OPENTHREAD_CONFIG_TCP_ENABLE
-  *
-  * Define as 1 to enable TCPlp (low power TCP defined in Thread spec).
-  *
-  */
+ * @def OPENTHREAD_CONFIG_TCP_ENABLE
+ *
+ * Define as 1 to enable TCPlp (low power TCP defined in Thread spec).
+ *
+ */
 #ifndef OPENTHREAD_CONFIG_TCP_ENABLE
 #define OPENTHREAD_CONFIG_TCP_ENABLE 0
 #endif
@@ -394,14 +395,14 @@
 #endif
 
 /**
-* @def OPENTHREAD_CONFIG_PSA_ITS_NVM_OFFSET
-*
-* This is the offset in ITS where the persistent keys are stored.
-* For Silabs OT applications, this needs to be in the range of 
-* 0x20000 to 0x2ffff.
-*
-*/
-#define OPENTHREAD_CONFIG_PSA_ITS_NVM_OFFSET  0x20000
+ * @def OPENTHREAD_CONFIG_PSA_ITS_NVM_OFFSET
+ *
+ * This is the offset in ITS where the persistent keys are stored.
+ * For Silabs OT applications, this needs to be in the range of
+ * 0x20000 to 0x2ffff.
+ *
+ */
+#define OPENTHREAD_CONFIG_PSA_ITS_NVM_OFFSET 0x20000
 
 /**
  * @def OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
@@ -417,18 +418,18 @@
 #endif
 
 /**
-  * @def OPENTHREAD_CONFIG_CRYPTO_LIB
-  *
-  * Selects the crypto backend library for OpenThread.
-  *
-  * There are several options available, but we enable PSA if key references are
-  * available.  Otherwise, mbedTLS is used as default (see src/core/config/crypto.h)
-  *
-  * - @sa OPENTHREAD_CONFIG_CRYPTO_LIB_MBEDTLS
-  * - @sa OPENTHREAD_CONFIG_CRYPTO_LIB_PSA
-  * - @sa OPENTHREAD_CONFIG_CRYPTO_LIB_PLATFORM
-  *
-  */
+ * @def OPENTHREAD_CONFIG_CRYPTO_LIB
+ *
+ * Selects the crypto backend library for OpenThread.
+ *
+ * There are several options available, but we enable PSA if key references are
+ * available.  Otherwise, mbedTLS is used as default (see src/core/config/crypto.h)
+ *
+ * - @sa OPENTHREAD_CONFIG_CRYPTO_LIB_MBEDTLS
+ * - @sa OPENTHREAD_CONFIG_CRYPTO_LIB_PSA
+ * - @sa OPENTHREAD_CONFIG_CRYPTO_LIB_PLATFORM
+ *
+ */
 #if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
 #define OPENTHREAD_CONFIG_CRYPTO_LIB OPENTHREAD_CONFIG_CRYPTO_LIB_PSA
 #endif
@@ -444,25 +445,25 @@
  */
 #ifndef SL_OPENTHREAD_CSL_TX_UNCERTAINTY
 #if OPENTHREAD_RADIO || OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
-  # define SL_OPENTHREAD_CSL_TX_UNCERTAINTY 175
+#define SL_OPENTHREAD_CSL_TX_UNCERTAINTY 175
 #elif OPENTHREAD_FTD
-  // Approx. ~128 us. for single CCA + some additional tx uncertainty in testing
-  #define SL_OPENTHREAD_CSL_TX_UNCERTAINTY 20
+// Approx. ~128 us. for single CCA + some additional tx uncertainty in testing
+#define SL_OPENTHREAD_CSL_TX_UNCERTAINTY 20
 #else
-  // Approx. ~128 us. for single CCA
-  //
-  // Note: Our SSEDs "schedule" transmissions to their parent in order to know
-  // exactly when in the future the data packets go out so they can calculate
-  // the accurate CSL phase to send to their parent.
-  //
-  // The receive windows on the SSEDs scale with this value, so increasing this
-  // uncertainty to account for full CCA/CSMA with 0..7 backoffs
-  // (see RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA) will mean that the
-  // receive windows can get very long (~ 5ms.)
-  //
-  // We have updated SSEDs to use a single CCA (RAIL_CSMA_CONFIG_SINGLE_CCA)
-  // instead. If they are in very busy channels, CSL won't be reliable anyway.
-  #define SL_OPENTHREAD_CSL_TX_UNCERTAINTY 12
+// Approx. ~128 us. for single CCA
+//
+// Note: Our SSEDs "schedule" transmissions to their parent in order to know
+// exactly when in the future the data packets go out so they can calculate
+// the accurate CSL phase to send to their parent.
+//
+// The receive windows on the SSEDs scale with this value, so increasing this
+// uncertainty to account for full CCA/CSMA with 0..7 backoffs
+// (see RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA) will mean that the
+// receive windows can get very long (~ 5ms.)
+//
+// We have updated SSEDs to use a single CCA (RAIL_CSMA_CONFIG_SINGLE_CCA)
+// instead. If they are in very busy channels, CSL won't be reliable anyway.
+#define SL_OPENTHREAD_CSL_TX_UNCERTAINTY 12
 #endif
 #endif
 
@@ -475,7 +476,7 @@
  *
  */
 #ifndef SL_OPENTHREAD_HFXO_ACCURACY
-  #define SL_OPENTHREAD_HFXO_ACCURACY SL_DEVICE_INIT_HFXO_PRECISION
+#define SL_OPENTHREAD_HFXO_ACCURACY SL_DEVICE_INIT_HFXO_PRECISION
 #endif
 
 /**
@@ -486,11 +487,11 @@
  * @note Platforms may optimize this value based on operational conditions (i.e.: temperature).
  */
 #ifndef SL_OPENTHREAD_LFXO_ACCURACY
-  #if defined(HARDWARE_BOARD_HAS_LFXO)
-    #define SL_OPENTHREAD_LFXO_ACCURACY SL_DEVICE_INIT_LFXO_PRECISION
-  #else
-    #define SL_OPENTHREAD_LFXO_ACCURACY 0
-  #endif
+#if defined(HARDWARE_BOARD_HAS_LFXO)
+#define SL_OPENTHREAD_LFXO_ACCURACY SL_DEVICE_INIT_LFXO_PRECISION
+#else
+#define SL_OPENTHREAD_LFXO_ACCURACY 0
+#endif
 #endif
 
 /**
@@ -520,7 +521,7 @@
  *
  */
 #ifndef SL_OPENTHREAD_ECDSA_PRIVATE_KEY_SIZE
-#define SL_OPENTHREAD_ECDSA_PRIVATE_KEY_SIZE  32
+#define SL_OPENTHREAD_ECDSA_PRIVATE_KEY_SIZE 32
 #endif
 
 #endif // OPENTHREAD_CORE_EFR32_CONFIG_H_

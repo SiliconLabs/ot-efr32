@@ -26,8 +26,8 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <openthread-core-config.h>
 #include "platform-efr32.h"
+#include <openthread-core-config.h>
 
 #if OPENTHREAD_CONFIG_HEAP_EXTERNAL_ENABLE
 #include <openthread/platform/memory.h>

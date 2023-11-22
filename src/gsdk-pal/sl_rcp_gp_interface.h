@@ -19,7 +19,8 @@
 #define SL_RCP_GP_INTERFACE_H_
 #include "utils/mac_frame.h"
 // GP state-machine states
-typedef enum {
+typedef enum
+{
     SL_GP_STATE_INIT,
     SL_GP_STATE_IDLE,
     SL_GP_STATE_WAITING_FOR_PKT,

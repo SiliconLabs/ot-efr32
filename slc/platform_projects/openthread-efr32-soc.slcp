@@ -1,8 +1,7 @@
-
-project_name: openthread-efr32-soc-with-buttons
+project_name: openthread-efr32-soc
 label: ot-efr32
 package: OpenThread
-description: This platform project is used to generate a CMake library for EFR32 SoCs with Buttons
+description: This platform project is used to generate a CMake library for EFR32 SoCs
 category: OpenThread Examples
 quality: production
 
@@ -12,22 +11,12 @@ component:
   - id: ot_mbedtls
   - id: ot_stack_features_config
     from: ot-efr32
+  - id: ot_vendor_extension
+    from: ot-efr32
   - id: uartdrv_usart
     instance:
       - vcom
-  - id: simple_button
-    instance:
-      - btn0
-      - btn1
   - id: rail_util_pti
-
-template_contribution:
-  - name: ot_init
-    value: sl_ot_create_instance
-    priority: 0
-  - name: ot_init
-    value: sl_ot_cli_init
-    priority: 20
 
 configuration:
   - name: SL_BOARD_ENABLE_VCOM

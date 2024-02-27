@@ -1,8 +1,8 @@
 
-project_name: openthread-efr32-soc-with-buttons-power-manager
+project_name: openthread-efr32-soc-with-buttons
 label: ot-efr32
 package: OpenThread
-description: This platform project is used to generate a CMake library for EFR32 SoCs with Buttons, and Power Manager
+description: This platform project is used to generate a CMake library for EFR32 SoCs with Buttons
 category: OpenThread Examples
 quality: production
 
@@ -12,6 +12,8 @@ component:
   - id: ot_mbedtls
   - id: ot_stack_features_config
     from: ot-efr32
+  - id: ot_vendor_extension
+    from: ot-efr32
   - id: uartdrv_usart
     instance:
       - vcom
@@ -20,7 +22,6 @@ component:
       - btn0
       - btn1
   - id: rail_util_pti
-  - id: power_manager
 
 template_contribution:
   - name: ot_init

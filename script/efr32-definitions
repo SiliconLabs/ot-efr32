@@ -41,9 +41,11 @@ if [ -z ${repo_dir+x} ]; then
     script_dir="$(realpath "$(dirname "${script_path}")")"
     repo_dir="$(dirname "${script_dir}")"
 fi
-# Check if gsdk_dir is defined
-if [ -z ${gsdk_dir+x} ]; then
-    gsdk_dir="${repo_dir}/third_party/silabs/gecko_sdk"
+# Check if sdk_dir is defined
+if [ -z ${sdk_dir+x} ]; then
+    # Error if sdk_dir is not defined
+    echo "Error: sdk_dir is not defined" >&2
+    exit 1
 fi
 
 efr32_device_regex=""
@@ -76,7 +78,7 @@ efr32_get_board_slcc()
     # Find component file for latest revision of board
     local board_slcc
     board_slcc=$(
-        find "${gsdk_dir}"/hardware/board/component -type f \( -name "${board}*" ! -name '*_support.slcc' \) \
+        find "${sdk_dir}"/hardware/board/component -type f \( -name "${board}*" ! -name '*_support.slcc' \) \
             | sort --version-sort \
             | tail -n 1
     )

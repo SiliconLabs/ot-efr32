@@ -37,10 +37,7 @@ else
 fi
 script_dir="$(realpath "$(dirname "${script_path}")")"
 repo_dir="$(dirname "${script_dir}")"
-gsdk_dir="${repo_dir}/third_party/silabs/gecko_sdk"
 
-# shellcheck source=script/efr32-definitions
-source "${repo_dir}/script/efr32-definitions"
 
 # shellcheck source=script/util
 source "${repo_dir}/script/util"
@@ -50,35 +47,61 @@ set -euxo pipefail
 # ==============================================================================
 # Pre-build checks
 
-set +x
-echo "========================================================================================================="
-echo "Check if the Git LFS package is installed"
-echo "========================================================================================================="
-set -x
-if ! git lfs >/dev/null; then
+# Initialize the Silicon Labs SDK
+init_silabs_sdk()
+{
+    local platform=$1
+    local sdk_dir
+
+    if [[ "${platform}" =~ efr32[mx]g[01]\d{0,1} ]]; then
+        set +x
+        echo "========================================================================================================="
+        echo "Using Gecko SDK for Series 0/1 platform: ${platform}"
+        echo "========================================================================================================="
+        set -x
+        sdk_dir="${repo_dir}/third_party/silabs/gecko_sdk"
+    elif [[ "${platform}" =~ efr32[mx]g[2-9]\d{0,1} ]]; then
+        set +x
+        echo "========================================================================================================="
+        echo "Using Simplicity SDK for Series 2+ platform: ${platform}"
+        echo "========================================================================================================="
+        set -x
+        sdk_dir="${repo_dir}/third_party/silabs/simplicity_sdk"
+    else
+        die "Unsupported platform: ${platform}"
+    fi
+
     set +x
-    echo "ERROR: Git LFS is not installed"
-    echo
-    echo "Please run './script/bootstrap packages'" to install it
-    exit 3
-fi
+    echo "========================================================================================================="
+    echo "Check if the Git LFS package is installed"
+    echo "========================================================================================================="
+    set -x
+    if ! git lfs >/dev/null; then
+        set +x
+        echo "ERROR: Git LFS is not installed"
+        echo
+        echo "Please run './script/bootstrap packages'" to install it
+        exit 3
+    fi
 
-set +x
-echo "========================================================================================================="
-echo "Ensure Git LFS has been initialized for the GSDK"
-echo "========================================================================================================="
-set -x
-if [ ! -f "$(git -C "${gsdk_dir}" rev-parse --git-dir)/hooks/pre-push" ]; then
-    git -C "${gsdk_dir}" lfs install
-fi
+    set +x
+    echo "========================================================================================================="
+    echo "Ensure Git LFS has been initialized for the GSDK"
+    echo "========================================================================================================="
+    set -x
+    if [ ! -f "$(git -C "${sdk_dir}" rev-parse --git-dir)/hooks/pre-push" ]; then
+        git -C "${sdk_dir}" lfs install
+    fi
 
-set +x
-echo "========================================================================================================="
-echo "Ensure GSDK submodule has been initialized and LFS objects have been pulled"
-echo "========================================================================================================="
-set -x
-git submodule update --init "${gsdk_dir}"
-git -C "${gsdk_dir}" lfs pull
+    set +x
+    echo "========================================================================================================="
+    echo "Ensure GSDK submodule has been initialized and LFS objects have been pulled"
+    echo "========================================================================================================="
+    set -x
+    git submodule update --init "${sdk_dir}"
+    git -C "${sdk_dir}" lfs pull
+
+}
 
 # ==============================================================================
 OT_CMAKE_NINJA_TARGET=${OT_CMAKE_NINJA_TARGET-}
@@ -283,11 +306,16 @@ main()
 
     platform=$(efr32_get_platform "${board}")
     efr32_check_platform "${platform}" || die "Unsupported platform ${platform}"
+    init_silabs_sdk "${platform}"
+
+    # shellcheck source=script/efr32-definitions
+    source "${repo_dir}/script/efr32-definitions"
 
     local options=("${OT_OPTIONS[@]}")
 
     options+=("-DCMAKE_TOOLCHAIN_FILE=src/${platform}/arm-none-eabi.cmake")
 
+    # Set default OT_CMAKE_NINJA_TARGET based on platform
     if [ -z "${OT_CMAKE_NINJA_TARGET}" ]; then
         case "${platform}" in
             efr32mg1)

@@ -181,7 +181,7 @@ target_link_libraries({{PROJECT_NAME}}
     PUBLIC
 {%- for lib_name in SYS_LIBS+USER_LIBS %}
     {#- Ignore GSDK static libs. These will be added below #}
-    {%- if 'SILABS_GSDK_DIR' not in lib_name %}
+    {%- if 'SILABS_SDK_DIR' not in lib_name %}
         {{ lib_name }}
     {%- endif %}
 {%- endfor %}
@@ -207,7 +207,7 @@ target_link_options({{PROJECT_NAME}} PRIVATE {{ print_linker_flags() }}
 {#- Generate a list of GSDK libs #}
 set(GSDK_LIBS
 {%- for lib_name in lib_list -%}
-    {%- if ('SILABS_GSDK_DIR' in lib_name) and ('jlink' not in lib_name) %}
+    {%- if ('SILABS_SDK_DIR' in lib_name) and ('jlink' not in lib_name) %}
     {{lib_name}}
     {%- endif %}
 {%- endfor %}

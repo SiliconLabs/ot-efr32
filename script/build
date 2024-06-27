@@ -38,6 +38,23 @@ fi
 script_dir="$(realpath "$(dirname "${script_path}")")"
 repo_dir="$(dirname "${script_dir}")"
 
+# ==============================================================================
+# SDKs
+# ==============================================================================
+# Gecko SDK
+gsdk_dir="${repo_dir}/third_party/silabs/gecko_sdk"
+readonly gsdk_dir
+
+# Simplicity SDK
+sisdk_dir="${repo_dir}/third_party/silabs/simplicity_sdk"
+readonly sisdk_dir
+
+# SDK directory to use
+sdk_dir=""
+
+# ==============================================================================
+# shellcheck source=script/efr32-definitions
+source "${repo_dir}/script/efr32-definitions"
 
 # shellcheck source=script/util
 source "${repo_dir}/script/util"
@@ -46,31 +63,54 @@ set -euxo pipefail
 
 # ==============================================================================
 # Pre-build checks
+# ==============================================================================
 
 # Initialize the Silicon Labs SDK
 init_silabs_sdk()
 {
-    local platform=$1
-    local sdk_dir
+    local board=$1
 
-    if [[ "${platform}" =~ efr32[mx]g[01]\d{0,1} ]]; then
+    # Check if a platform can be found for a given board in Simplicity SDK
+    platform=$(efr32_get_platform "${board}" "${sisdk_dir}")
+
+    # If the platform is found for a given board, print a message and use Simplicity SDK
+    # If the platform is not found in Simplicity SDK, check Gecko SDK
+    # If the platform is not found in Gecko SDK, exit with an error
+    if [ -n "${platform}" ]; then
         set +x
         echo "========================================================================================================="
-        echo "Using Gecko SDK for Series 0/1 platform: ${platform}"
+        echo "Using Simplicity SDK for board ${board} (${platform})"
         echo "========================================================================================================="
         set -x
-        sdk_dir="${repo_dir}/third_party/silabs/gecko_sdk"
-    elif [[ "${platform}" =~ efr32[mx]g[2-9]\d{0,1} ]]; then
-        set +x
-        echo "========================================================================================================="
-        echo "Using Simplicity SDK for Series 2+ platform: ${platform}"
-        echo "========================================================================================================="
-        set -x
-        sdk_dir="${repo_dir}/third_party/silabs/simplicity_sdk"
     else
-        die "Unsupported platform: ${platform}"
+        platform=$(efr32_get_platform "${board}" "${gsdk_dir}")
+
+        if [ -n "${platform}" ]; then
+            set +x
+            echo "========================================================================================================="
+            echo "Using Gecko SDK for board ${board} (${platform})"
+            echo "========================================================================================================="
+            set -x
+            sdk_dir="${gsdk_dir}"
+        else
+            die "Unsupported board ${board}"
+        fi
     fi
 
+    # Check if the platform is supported
+    efr32_check_platform "${platform}" || die "Unsupported platform ${platform}"
+
+    set +x
+    echo "========================================================================================================="
+    echo "Ensure SDK submodule has been initialized"
+    echo "========================================================================================================="
+    set -x
+    # Skip LFS files for now. They will be pulled in init_silabs_sdk_lfs()
+    GIT_LFS_SKIP_SMUDGE=true git submodule update --init "${sdk_dir}"
+}
+
+init_silabs_sdk_lfs()
+{
     set +x
     echo "========================================================================================================="
     echo "Check if the Git LFS package is installed"
@@ -95,14 +135,15 @@ init_silabs_sdk()
 
     set +x
     echo "========================================================================================================="
-    echo "Ensure GSDK submodule has been initialized and LFS objects have been pulled"
+    echo "Ensure LFS objects have been pulled"
     echo "========================================================================================================="
     set -x
-    git submodule update --init "${sdk_dir}"
+
+    # TODO: Add .lfsconfig lines to only fetch the necessary files
     git -C "${sdk_dir}" lfs pull
 
-}
 
+}
 # ==============================================================================
 OT_CMAKE_NINJA_TARGET=${OT_CMAKE_NINJA_TARGET-}
 
@@ -304,12 +345,8 @@ main()
         shift
     fi
 
-    platform=$(efr32_get_platform "${board}")
-    efr32_check_platform "${platform}" || die "Unsupported platform ${platform}"
-    init_silabs_sdk "${platform}"
-
-    # shellcheck source=script/efr32-definitions
-    source "${repo_dir}/script/efr32-definitions"
+    # Initialize the correct SDK
+    init_silabs_sdk "${board}"
 
     local options=("${OT_OPTIONS[@]}")
 

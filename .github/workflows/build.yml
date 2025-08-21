@@ -138,11 +138,19 @@ jobs:
               mv "build/${board}/slc" "artifact/${board}"
           done
 
+      - name: Upload SLC CLI Log on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slc-cli-log
+          path: /opt/slc_cli/slc_cli/bin/slc-cli/configuration/*.log
+
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: build-${{ matrix.gcc_ver }}
           path: artifact
+
 
   dockerhub-publish:
     name: DockerHub Publish

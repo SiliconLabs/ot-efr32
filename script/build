@@ -329,6 +329,10 @@ main()
             efr32mg2*)
                 target_apps=("ot-rcp-uart" "ot-rcp-spi" "ot-cli-ftd" "ot-cli-mtd" "ot-ncp-ftd" "ot-ncp-mtd")
                 ;;
+            si*g301*)
+                target_apps=("ot-cli-ftd" "ot-cli-mtd")
+                skip_silabs_apps=true
+                ;;
         esac
     else
         # Use the specified target apps

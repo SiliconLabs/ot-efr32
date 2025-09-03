@@ -228,6 +228,7 @@ main()
     platform=$(
         grep -Eo 'board:device:.*' "${board_slcc}" \
             | sed "s/board:device:${efr32_device_regex}/efr32\2\4/" \
+            | sed 's/board:device:simg301.*/simg301/' \
             | head -n 1
     )
     if [ -z "$platform" ]; then

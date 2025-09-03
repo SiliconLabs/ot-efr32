@@ -121,6 +121,7 @@ efr32_get_platform()
     platform=$(
         grep -Eo 'board:device:.*' "${board_slcc}" \
             | sed "s/board:device:${efr32_device_regex}/efr32\2\4/" \
+            | sed 's/board:device:simg301.*/simg301/' \
             | head -n 1
     )
 
@@ -130,7 +131,7 @@ efr32_get_platform()
 efr32_get_platforms()
 {
     local platform_dir="$repo_dir/src" \
-        && find "$platform_dir" -type d -name '*efr32*' -exec basename {} \; | sort
+        && find "$platform_dir" -type d \( -name '*efr32*' -o -name '*simg301*' \) -exec basename {} \; | sort
 }
 
 efr32_check_platform()

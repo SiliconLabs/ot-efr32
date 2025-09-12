@@ -190,6 +190,9 @@ target_link_libraries({{PROJECT_NAME}}
     PRIVATE
         -T${LD_FILE}
         -Wl,--gc-sections
+    {% if dict_contains_key_starting_with(C_CXX_DEFINES, "SL_CODE_COMPONENT_FREERTOS_KERNEL") -%}
+        -Wl,--wrap=main
+    {%- endif %}
         ot-config
 )
 

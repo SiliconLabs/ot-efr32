@@ -83,6 +83,11 @@
 //==============================================================================
 otInstance *sInstance;
 
+otInstance *otGetInstance(void)
+{
+    return sInstance;
+}
+
 //==============================================================================
 // Serial process helper functions
 //==============================================================================
@@ -138,6 +143,26 @@ OT_TOOL_WEAK void otSysEventSignalPending(void)
 //==============================================================================
 // Other function definitions
 //==============================================================================
+void sl_ot_create_instance(void)
+{
+#if OPENTHREAD_CONFIG_MULTIPLE_INSTANCE_ENABLE
+    size_t otInstanceBufferLength = 0;
+
+    // Call to query the buffer size
+    (void)otInstanceInit(NULL, &otInstanceBufferLength);
+
+    // Call to allocate the buffer
+    sOtInstanceBuffer = (uint8_t *)sl_malloc(otInstanceBufferLength);
+    assert(sOtInstanceBuffer);
+
+    // Initialize OpenThread with the buffer
+    sInstance = otInstanceInit(sOtInstanceBuffer, &otInstanceBufferLength);
+#else
+    sInstance = otInstanceInitSingle();
+#endif
+    assert(sInstance);
+}
+
 void otSysInit(int argc, char *argv[])
 {
     OT_UNUSED_VARIABLE(argc);
@@ -146,6 +171,10 @@ void otSysInit(int argc, char *argv[])
     // Note that if the kernel is present, processing task(s) will be created by
     // this call.
     sl_main_init();
+
+#if defined(SL_CATALOG_KERNEL_PRESENT)
+    sl_main_kernel_start();
+#endif
 
     // Initialize the application. For example, create periodic timer(s) or
     // task(s) if the kernel is present.

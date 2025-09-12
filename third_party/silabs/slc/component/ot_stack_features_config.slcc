@@ -6,6 +6,7 @@ quality: production
 description: This component provides the OpenThread stack features configuration
 provides:
   - name: ot_stack_features_config
+  - name: ot_stack
 config_file:
   - path: third_party/silabs/simplicity_sdk/protocol/openthread/config/sl_openthread_radio_config.h
   - path: third_party/silabs/simplicity_sdk/protocol/openthread/config/sl_openthread_features_config.h
@@ -14,6 +15,19 @@ config_file:
   - path: third_party/silabs/simplicity_sdk/protocol/openthread/config/sl_openthread_reference_device_config.h
     file_id: openthread_features
     condition: [ot_reference_device]
+  - path: third_party/silabs/simplicity_sdk/protocol/openthread/config/sl_openthread_rtos_config.h
+    condition:
+      - kernel
+include:
+  - path: third_party/silabs/simplicity_sdk/protocol/openthread/platform-abstraction/rtos
+    condition:
+      - kernel
+    file_list:
+      - path: sl_ot_rtos_adaptation.h
+source:
+  - path: third_party/silabs/simplicity_sdk/protocol/openthread/platform-abstraction/rtos/sl_ot_rtos_adaptation.c
+    condition:
+      - kernel
 validation_helper:
   - path: third_party/silabs/simplicity_sdk/protocol/openthread/component/script/ot_log_validation.lua
 define:
@@ -23,3 +37,31 @@ define:
   - name: SL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE
     value: "\"sl_openthread_reference_device_config.h\""
     condition: [ot_reference_device]
+template_contribution:
+  - name: event_handler
+    value:
+      event: internal_app_init
+      include: sl_ot_rtos_adaptation.h
+      handler: sl_ot_rtos_stack_init
+      priority: 9
+    condition:
+      - kernel
+  - name: event_handler
+    value:
+      event: internal_app_init
+      include: sl_ot_rtos_adaptation.h
+      handler: sl_ot_rtos_app_init
+      priority: 10
+    condition:
+      - kernel
+  - name: event_handler
+    value:
+      event: stack_permanent_allocation
+      include: sl_ot_rtos_adaptation.h
+      handler: sl_ot_rtos_perm_allocation
+    priority: 9
+    condition: [sl_main, kernel]
+  - name: ot_init
+    value: sl_ot_create_instance
+    priority: 0
+
